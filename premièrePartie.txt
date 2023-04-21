@@ -1,0 +1,47 @@
+La première partie de ce sujet concerne la configuration de deux machines
+virtuelles avec Vagrant et l'installation de K3s sur ces machines. 
+Voici les étapes pour réaliser cette partie :
+
+    1- Installer Vagrant sur votre machine locale si ce n'est pas déjà fait.
+    Vous pouvez trouver les instructions d'installation sur le site officiel : 
+    https://www.vagrantup.com/downloads
+
+    2- Créez un nouveau dossier pour votre projet et naviguez vers ce dossier
+    dans l'invite de commande ou le terminal.
+
+    3- Dans ce dossier, créez un fichier Vagrantfile.
+    Vous pouvez le créer manuellement ou en utilisant la commande vagrant init.
+
+    4- Ouvrez le fichier Vagrantfile et configurez-le selon les exigences du sujet.
+    Vous pouvez vous inspirer de l'exemple fourni dans le sujet.
+    Les spécifications attendues sont les suivantes :
+
+        * Les noms de machine doivent être basés sur les logins de votre équipe.
+        * Les machines doivent avoir une adresse IP dédiée sur l'interface 
+        eth1 (192.168.56.110 pour la première et 192.168.56.111 pour la seconde).
+        * Les machines doivent être accessibles via SSH sans mot de passe.
+
+    5- Dans le fichier Vagrantfile, ajoutez des scripts de provisionnement pour
+    installer K3s sur les deux machines virtuelles.
+    La première machine (Server) doit être en mode contrôleur,
+    tandis que la seconde (ServerWorker) doit être en mode agent.
+    Vous pouvez utiliser les scripts shell pour cela.
+
+    6- Installez également kubectl sur les machines virtuelles,
+    car il sera nécessaire pour gérer votre cluster K3s.
+
+    7- Une fois que vous avez terminé de configurer le Vagrantfile,
+    exécutez la commande vagrant up dans le terminal pour démarrer et configurer
+    les deux machines virtuelles.
+
+    8- Utilisez vagrant ssh <nom_de_la_machine> pour vous connecter aux machines
+    et vérifier que K3s et kubectl sont correctement installés et fonctionnent.
+
+    9- Après avoir vérifié que tout fonctionne comme prévu, enregistrez vos 
+    fichiers de configuration et vos scripts dans les dossiers appropriés dans 
+    votre dépôt Git, comme indiqué dans les instructions.
+
+En suivant ces étapes, 
+vous devriez être en mesure de réaliser la première partie du sujet.
+Assurez-vous de lire attentivement les instructions et de consulter
+la documentation appropriée si nécessaire.
