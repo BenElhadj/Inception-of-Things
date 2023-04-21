@@ -1,3 +1,21 @@
+Mandatory part
+
+This project will consist of setting up several environments under specific rules.
+
+It is divided into three parts you have to do in the following order:
+
+• Part 1: K3s and Vagrant
+• Part 2: K3s and three simple applications
+• Part 3: K3d and Argo CD
+
+
+
+
+
+
+
+
+
 La partie bonus de ce sujet consiste à ajouter GitLab dans le laboratoire 
 réalisé dans la partie 3. Voici les étapes pour réaliser cette partie bonus :
 

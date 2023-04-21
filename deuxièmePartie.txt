@@ -1,3 +1,18 @@
+Mandatory part
+
+This project will consist of setting up several environments under specific rules.
+
+It is divided into three parts you have to do in the following order:
+
+• Part 1: K3s and Vagrant
+• Part 2: K3s and three simple applications
+• Part 3: K3d and Argo CD
+
+
+
+
+
+
 Dans la deuxième partie du projet, vous devez mettre en place 3 applications
 Web simples dans votre instance K3s, en utilisant une seule machine virtuelle
 avec la distribution de votre choix (dernière version stable) et K3s en mode
