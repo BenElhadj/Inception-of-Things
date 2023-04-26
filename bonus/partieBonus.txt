@@ -1,0 +1,74 @@
+Mandatory part
+
+This project will consist of setting up several environments under specific rules.
+
+It is divided into three parts you have to do in the following order:
+
+• Part 1: K3s and Vagrant
+• Part 2: K3s and three simple applications
+• Part 3: K3d and Argo CD
+
+Chapter V
+Bonus part
+
+The following extra is intended to be useful: add Gitlab in the lab you did in Part 3.
+    
+    Beware this bonus is complex. The latest version available of Gitlab
+    from the official website is expected.
+
+    You are allowed to use whatever you need to achieve this extra. For example, helm
+could be useful here.
+
+    • Your Gitlab instance must run locally.
+    • Configure Gitlab to make it work with your cluster.
+    • Create a dedicated namespace named gitlab.
+    • Everything you did in Part 3 must work with your local Gitlab.
+
+    Turn this extra work in a new folder named bonus and located at the root of your
+repository. You can add everything needed so your entire cluster works.
+
+    The bonus part will only be assessed if the mandatory part is
+    PERFECT. Perfect means the mandatory part has been integrally done
+    and works without malfunctioning. If you have not passed ALL the
+    mandatory requirements, your bonus part will not be evaluated at all.
+
+Chapter VI
+Submission and peer-evaluation
+
+    Turn in your assignment in your Git repository as usual. 
+Only the work inside your repository will be evaluated during the defense.
+Don’t hesitate to double check the names of
+your folders and files to ensure they are correct.
+
+    Reminder:
+
+        • Turn the mandatory part in three folders located at the root of your repository:
+            p1, p2 and p3.
+        • Optional: Turn the bonus part in a located at the root of your repository:
+            bonus.
+
+    Below is an example of the expected directory structure:
+
+$> find -maxdepth 2 -ls
+424242      4       drwxr-xr-x      6       wandre      wil42       4096        sept.       17      23:42       .
+424242      4       drwxr-xr-x      3       wandre      wil42       4096        sept.       17      23:42       ./p1
+424242      4       -rw-r--r--      1       wandre      wil42       XXXX        sept.       17      23:42       ./p1/Vagrantfile
+424242      4       drwxr-xr-x      2       wandre      wil42       4096        sept.       17      23:42       ./p1/scripts
+424242      4       drwxr-xr-x      2       wandre      wil42       4096        sept.       17      23:42       ./p1/confs
+424242      4       drwxr-xr-x      3       wandre      wil42       4096        sept.       17      23:42       ./p2
+424242      4       -rw-r--r--      1       wandre      wil42       XXXX        sept.       17      23:42       ./p2/Vagrantfile
+424242      4       drwxr-xr-x      2       wandre      wil42       4096        sept.       17      23:42       ./p2/scripts
+424242      4       drwxr-xr-x      2       wandre      wil42       4096        sept.       17      23:42       ./p1/confs
+424242      4       drwxr-xr-x      3       wandre      wil42       4096        sept.       17      23:42       ./p3
+424242      4       drwxr-xr-x      2       wandre      wil42       4096        sept.       17      23:42       ./p3/scripts
+424242      4       drwxr-xr-x      2       wandre      wil42       4096        sept.       17      23:42       ./p3/confs
+424242      4       drwxr-xr-x      3       wandre      wil42       4096        sept.       17      23:42       ./bonus
+424242      4       -rw-r--r--      1       wandre      wil42       XXXX        sept.       17      23:42       ./bonus/Vagrantfile
+424242      4       drwxr-xr-x      2       wandre      wil42       4096        sept.       17      23:42       ./bonus/scripts
+424242      4       drwxr-xr-x      2       wandre      wil42       4096        sept.       17      23:42       ./bonus/confs
+
+    Any scripts you need will be added in a scripts folder. The
+    configuration files will be in a confs folder.
+
+    The evaluation process will happen on the computer of the evaluated
+    group.

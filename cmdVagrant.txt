@@ -1,0 +1,12 @@
+vagrant up 
+vagrant ssh 
+sudo apt-get update
+sudo apt-get install -y virtualbox vagrant
+scp -r ../../vagrant/p* .
+cd p1
+vagrant up
+
+
+vagrant halt
+vagrant destroy
+rm -rf .vagrant

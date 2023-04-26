@@ -1,0 +1,112 @@
+Mandatory part
+
+This project will consist of setting up several environments under specific rules.
+
+It is divided into three parts you have to do in the following order:
+
+• Part 1: K3s and Vagrant
+• Part 2: K3s and three simple applications
+• Part 3: K3d and Argo CD
+
+Part 2: K3s and three simple applications
+You now understand the basics of K3s. Time to go further! To complete this part, you
+will need only one virtual machine with the distribution of your choice (latest
+stable version) and K3s in server mode installed.
+
+    You will set up 3 web applications of your choice that will run in your K3s instance.
+You will have to be able to access them depending on the HOST used when making a
+request to the IP address 192.168.56.110. The name of this machine will be your login
+followed by S (e.g., wilS if your login is wil).
+
+    When a client inputs the ip 192.168.56.110 in his web browser with the HOST app1.com,
+the server must display the app1. When the HOST app2.com is used, the server must display the app2.
+Otherwise, the app3 will be selected by default.
+
+    As you can see, application number 2 has 3 replicas. Adapt your
+        configuration to create the replicas.
+
+First, here is an expected result when the virtual machine is not configured:
+
+[vagrant@wilS ~]$   k get nodes -o wide 
+NAME    STATUS      ROLES                   AGE     VERSION         INTERNAL-IP         EXTERNAL-IP     OS-IMAGE            KERNEL-VERSION                  CONTAINER-RUNTIME   
+wils    Ready       controle-plane,master   14m     v1.21.4+k3s1    192.168.42.110      <none>          CentOS Linux 8      4.18.0-240.1.1.el8_3.x86_64     containerd://1.4.9-k3s1 
+[vagrant@wilS ~]$   k get all -n kube-system
+
+NAME                                            READY   STATUS                  RESTARTS    AGE
+pod/metrics-server-86cbb8457f-69zx4             0/1     ContainerCreating       0           14m
+pod/locale-path-provisioner-5ff76fc89d-p7g5b    0/1     ContainerCreating       0           14m
+pod/helm-install-traefik-crd-wkn88              0/1     ContainerCreating       0           14m
+pod/helm-install-traefik-82sqz                  0/1     ContainerCreating       0           14m
+
+NAME                        TYPE            CLUSTER-IP          EXTERNAL-IP     PORT(S)                     AGE
+service/kube-dans           ClusterIP       10.43.0.10          <none>          53/UDP,53/TCP,9153/TCP      14m
+service/metrics-server      ClusterIP       10.43.89.196        <none>          443/TCP                     14m
+
+NAME                                            READY       UP-TO-DEDICATED         AVALABLE        AGE
+deployment.apps/locale-path-provisioner         0/1         1                       0               14m
+deployment.apps/coredns                         0/1         1                       0               14m
+deployment.apps/metrics-server                  0/1         1                       0               14m
+
+NAME                                                        DESIRED     CURRENT     READY       AGE
+replicaset.apps/metrics-server-86cbb8457f                   1           1           0           14m
+replicaset.apps/locale-path-provisioner-5ff76fc89d          1           1           0           14m
+replicaset.apps/coredns-7448499f4d                          1           1           0           14m
+
+NAME                                    COMPLETIONS     DURATIN     AGE
+job.batch/helm-install-traefik          0/1             14m         14m
+job.batch/helm-install-traefik-crd      0/1             14m         14m
+[vagrant@wilS ~]$
+
+
+Here is an expected result when the virtual machine is correctly configured:
+
+[vagrant@wilS de]$ k get all
+NAME                                READY   STATUS          RESTARTS        AGE
+pod/app-tow-6bc974bc98-qtjj7        1/1     RUNNING         0               15m
+pod/app-one-6fd76fc6f9-9h64n        1/1     RUNNING         0               15m
+pod/app-three-688f68bdcc-sm9rt      1/1     RUNNING         0               15m
+pod/app-tow-6bc974bc98-nzwth        1/1     RUNNING         0               15m
+pod/app-tow-6bc974bc98-qhp6p        1/1     RUNNING         0               15m
+
+NAME                                        DESIRED         CURRENT         READY       AGE
+replicaset.app/app-one-6fd76fc6f9           1               1               1           15m
+replicaset.app/app-three-688f68bdcc         1               1               1           15m
+replicaset.app/app-tow-6bc974bc98           3               3               3           15m
+[vagrant@wilS de]$curl -H "Host:app2.com" 192.168.42.110
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hello Kubernetes!</title>
+    <link rel="stylesheet" type="test/css" href="/css/main.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Ubuntu:300" >
+</head>
+<body>
+
+    <div class="main">
+        <img src="/images/Kubernetes.png"/>
+        <div class="content">
+            <div id="message">
+    Hello from app2.
+</div>
+<div id="info">
+    <table>
+        <tr>
+            <th>pod</th>
+            <td>app-tow-6bc974bc98-qtjj7</td>
+        </tr>
+        <tr>
+            <th>node:</th>
+            <td>Linux (4.18.0-240.1.1.el8_3.x86_64)</td>
+        </tr>
+    </table>
+
+</div>
+    </div>
+  </div>
+</body>
+</html>[vagrant@wilS de]$
+
+
+    The Ingress is not displayed here on purpose. You will have to show
+        it to your evaluators during your defense.
+
