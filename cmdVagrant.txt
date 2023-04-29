@@ -1,12 +1,36 @@
-vagrant up 
-vagrant ssh 
-sudo apt-get update
-sudo apt-get install -y virtualbox vagrant
-scp -r ../../vagrant/p* .
-cd p1
-vagrant up
+# VBoxManage setproperty machinefolder /mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/VirtualBoxVMs
+dans ~/.zshrc
 
+changer "plugins=(git)" par
+
+# plugins=(
+#     git
+#     zsh-autosuggestions
+#     )
+et ajouter ces lignes a la fin du fichier
+# export VBOX_USER_HOME="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/.configVB"
+# export VAGRANT_HOME=/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/.vagrant.d
+
+
+########################################
+
+vagrant up / vagrant reload 
+vagrant ssh 
+
+scp -r ../../vagrant/bonus ../../vagrant/p* .
+cd p1
+vagrant up / vagrant reload 
+
+vagrant ssh bhamdiS
+vagrant ssh bhamdiSW
+
+sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+
+vagrant@bhamdiS:~$ kubectl get nodes -o wide
 
 vagrant halt
 vagrant destroy
-rm -rf .vagrant
+rm -rf .*
+
+vagrant global-status 
+rm -rf ~/.vagrant.d

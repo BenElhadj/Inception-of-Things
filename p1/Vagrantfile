@@ -6,12 +6,22 @@ Vagrant.configure("2") do |config|
     server.vm.network "private_network", ip: "192.168.56.110"
 
     server.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048"
+      vb.memory = "1024"
       vb.cpus = 1
       vb.name = "bhamdiS"
     end
 
-    server.vm.synced_folder "~/p1", "/vagrant_data"
+    server.vm.synced_folder "/home/vagrant/p1", "/vagrant_data"
+
+    server.vm.provision "shell", inline: <<-SHELL
+      sudo apt-get update
+      sudo apt-get upgrade -y
+      curl -sfL https://get.k3s.io | sh -s - server --disable traefik
+      sudo mkdir -p /home/vagrant/.kube
+      sudo cp /etc/rancher/k3s/k3s.yaml /home/vagrant/.kube/config
+      sudo chown -R vagrant:vagrant /home/vagrant/.kube
+      sudo snap install kubectl --classic
+    SHELL
   end
 
   config.vm.define "bhamdiSW" do |worker|
@@ -19,16 +29,20 @@ Vagrant.configure("2") do |config|
     worker.vm.network "private_network", ip: "192.168.56.111"
 
     worker.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048"
+      vb.memory = "1024"
       vb.cpus = 1
       vb.name = "bhamdiSW"
     end
 
-    worker.vm.synced_folder "~/p1", "/vagrant_data"
-  end
+    worker.vm.synced_folder "/home/vagrant/p1", "/vagrant_data"
 
-  config.vm.provision "shell", inline: <<-SHELL
-    sudo apt-get update
-    sudo apt-get upgrade -y
-  SHELL
+    worker.vm.provision "shell", inline: <<-SHELL
+      sudo apt-get update
+      sudo apt-get upgrade -y
+      sudo apt-get install -y jq
+      K3S_TOKEN=$(curl -sSL http://192.168.56.110:8080/node-token)
+      curl -sfL https://get.k3s.io | sh -s - agent --server https://192.168.56.110:6443 --token $K3S_TOKEN
+      sudo snap install kubectl --classic
+    SHELL
+  end
 end

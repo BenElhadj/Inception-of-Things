@@ -1,0 +1,4 @@
+.configVB
+.vagrant
+.vagrant.d
+VirtualBoxVMs
