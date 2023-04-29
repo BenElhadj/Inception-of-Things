@@ -1,4 +1,3 @@
-# VBoxManage setproperty machinefolder /mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/VirtualBoxVMs
 dans ~/.zshrc
 
 changer "plugins=(git)" par
@@ -9,9 +8,15 @@ changer "plugins=(git)" par
 #     )
 et ajouter ces lignes a la fin du fichier
 # export VBOX_USER_HOME="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/.configVB"
-# export VAGRANT_HOME=/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/.vagrant.d
+# export VAGRANT_HOME="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/.vagrant.d"
+# export VBOX_MSI_INSTALL_PATH="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/VirtualBoxVMs"
 
+lancer cette commande
+source ~/.zshrc
 
+echo 'export VBOX_MSI_INSTALL_PATH="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/VirtualBoxVMs"' >> ~/.bashrc
+
+assurer vous d'avoir ton VirtualBox ouvert
 ########################################
 
 vagrant up / vagrant reload 
@@ -28,9 +33,14 @@ sudo chmod 644 /etc/rancher/k3s/k3s.yaml
 
 vagrant@bhamdiS:~$ kubectl get nodes -o wide
 
+vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant .vagrant.d VirtualBoxVMs ~/VirtualBox\ VMs
+
+
+pour appliquer des modification sur la machine deja creer
 vagrant halt
-vagrant destroy
-rm -rf .*
+vagrant up
+vagrant provision
+
 
 vagrant global-status 
 rm -rf ~/.vagrant.d
