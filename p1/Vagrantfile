@@ -15,18 +15,7 @@ Vagrant.configure("2") do |config|
       vb.name = "bhamdiS"
     end
 
-    server.vm.synced_folder "/home/vagrant/p1", "/vagrant_data", SharedFoldersEnableSymlinksCreate: false
-
-    server.vm.provision "shell", inline: <<-SHELL
-      export DEBIAN_FRONTEND=noninteractive
-      sudo apt-get update
-      # sudo apt-get upgrade -y -q
-      curl -sfL https://get.k3s.io | sh -s - server --disable traefik --node-ip 192.168.56.110
-      sudo mkdir -p /home/vagrant/.kube
-      sudo cp /etc/rancher/k3s/k3s.yaml /home/vagrant/.kube/config
-      sudo chown -R vagrant:vagrant /home/vagrant/.kube
-      sudo snap install kubectl --classic
-    SHELL
+    server.vm.provision "shell", path: "./scripts.sh", args: "master"
   end
 
   config.vm.define "bhamdiSW" do |worker|
@@ -39,16 +28,6 @@ Vagrant.configure("2") do |config|
       vb.name = "bhamdiSW"
     end
 
-    worker.vm.synced_folder "/home/vagrant/p1", "/vagrant_data"
-
-    worker.vm.provision "shell", inline: <<-SHELL
-      export DEBIAN_FRONTEND=noninteractive
-      sudo apt-get update
-      # sudo apt-get upgrade -y -q
-      sudo apt-get install -y jq
-      K3S_TOKEN=$(curl -sSL http://192.168.56.110:8080/node-token)
-      curl -sfL https://get.k3s.io | sh -s - agent --server https://192.168.56.110:6443 --token $K3S_TOKEN --node-ip 192.168.56.111
-      sudo snap install kubectl --classic
-    SHELL
+    worker.vm.provision "shell", path: "./scripts.sh", args: "worker"
   end
 end

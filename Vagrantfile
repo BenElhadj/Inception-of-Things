@@ -1,3 +1,6 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/focal64"
 
@@ -21,9 +24,9 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.provision "shell", inline: <<-SHELL
-    sudo apt-get update
+    sudo apt-get update -q
     # sudo apt-get upgrade -y -q -o Dpkg::Options::="--force-confold"
-    sudo apt-get install -y virtualbox vagrant sshpass
+    sudo apt-get install -y virtualbox vagrant sshpass -q
   SHELL
 
 end

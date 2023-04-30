@@ -1,21 +1,13 @@
-dans ~/.zshrc
-
-changer "plugins=(git)" par
-
-# plugins=(
-#     git
-#     zsh-autosuggestions
-#     )
-et ajouter ces lignes a la fin du fichier
-# export VBOX_USER_HOME="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/.configVB"
-# export VAGRANT_HOME="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/.vagrant.d"
-# export VBOX_MSI_INSTALL_PATH="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/VirtualBoxVMs"
-
-lancer cette commande
-source ~/.zshrc
-
+echo 'plugins=(git
+            zsh-autosuggestions
+            )' >> ~/.zshrc
+******************************
+echo 'export VBOX_USER_HOME="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/.configVB"' >> ~/.zshrc
+echo 'export VAGRANT_HOME="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/.vagrant.d"' >> ~/.zshrc
+echo 'export VBOX_MSI_INSTALL_PATH="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/VirtualBoxVMs"' >> ~/.zshrc
 echo 'export VBOX_MSI_INSTALL_PATH="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/VirtualBoxVMs"' >> ~/.bashrc
 
+source ~/.zshrc
 assurer vous d'avoir ton VirtualBox ouvert
 ########################################
 
@@ -44,3 +36,14 @@ vagrant provision
 
 vagrant global-status 
 rm -rf ~/.vagrant.d
+
+
+cp -rf .bash_logout .bash_logoutOld && cp -rf .bashrc .bashrcOld && cp -rf .cache .cacheOld/ && cp -rf .profile .profileOld
+
+
+en cas de probleme dans la machine vagrant@Inseption-Of-Things pour eviter de tout reinstaller
+
+vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant .vagrant.d VirtualBoxVMs ~/VirtualBox\ VMs
+cd && rm -rf p* bonus/ VirtualBox\ VMs/ .config/ .vagrant.d/
+cp -rf .bash_logoutOld .bash_logout && cp -rf .bashrcOld .bashrc && cp -rf .cacheOld/ .cache && cp -rf .profileOld .profile
+scp -r ../../vagrant/bonus ../../vagrant/p* . && cd p1 && vagrant up
