@@ -2,6 +2,7 @@
 # vi: set ft=ruby :
 
 # Récupération du nom d'utilisateur et du nombre de processeurs disponibles sur l'hôte
+# username = File.read("/home/vagrant/username").strip
 username = `whoami`.strip
 total_cpus = `nproc`.to_i
 cpus_per_vm = (total_cpus / 5.0).ceil

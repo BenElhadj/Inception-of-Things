@@ -2,10 +2,10 @@ echo 'plugins=(git
             zsh-autosuggestions
             )' >> ~/.zshrc
 ******************************
-echo 'export VBOX_USER_HOME="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/.configVB"' >> ~/.zshrc
-echo 'export VAGRANT_HOME="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/.vagrant.d"' >> ~/.zshrc
-echo 'export VBOX_MSI_INSTALL_PATH="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/VirtualBoxVMs"' >> ~/.zshrc
-echo 'export VBOX_MSI_INSTALL_PATH="/mnt/nfs/homes/bhamdi/sgoinfre/Inception-of-Things/VirtualBoxVMs"' >> ~/.bashrc
+echo 'export VBOX_USER_HOME="~/sgoinfre/Inception-of-Things/.configVB"' >> ~/.zshrc
+echo 'export VAGRANT_HOME="~/sgoinfre/Inception-of-Things/.vagrant.d"' >> ~/.zshrc
+echo 'export VBOX_MSI_INSTALL_PATH="~/sgoinfre/Inception-of-Things/VirtualBoxVMs"' >> ~/.zshrc
+echo 'export VBOX_MSI_INSTALL_PATH="~/sgoinfre/Inception-of-Things/VirtualBoxVMs"' >> ~/.bashrc
 
 source ~/.zshrc
 assurer vous d'avoir ton VirtualBox ouvert
@@ -66,7 +66,6 @@ k describe node bhamdiSW
 ifconfig eth1
 
 vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant .vagrant.d VirtualBoxVMs ~/VirtualBox\ VMs ./scripts  
-
 
 
 pour tester le p2
