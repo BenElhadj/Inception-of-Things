@@ -1,33 +1,39 @@
-require 'etc'
-total_cpus = Etc.nprocessors
-cpus_per_vm = (total_cpus / 3.0).ceil
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Récupération du nom d'utilisateur et du nombre de processeurs disponibles sur l'hôte
+username = `whoami`.strip
+total_cpus = `nproc`.to_i
+cpus_per_vm = (total_cpus / 5.0).ceil
+
+# Configuration des adresses IP pour le serveur et le worker
+SERVER_IP = "192.168.56.110"
+WORKER_IP = "192.168.56.111"
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "ubuntu/focal64"
-
-  config.vm.define "bhamdiS" do |server|
-    server.vm.hostname = "bhamdiS"
-    server.vm.network "private_network", ip: "192.168.56.110"
-
-    server.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048"
-      vb.cpus = cpus_per_vm
-      vb.name = "bhamdiS"
-    end
-
-    server.vm.provision "shell", path: "./scripts.sh", args: "master"
+  # Spécification de la box et du provider à utiliser
+  config.vm.box = "generic/ubuntu2004"
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "2048"
+    vb.cpus = cpus_per_vm
   end
 
-  config.vm.define "bhamdiSW" do |worker|
-    worker.vm.hostname = "bhamdiSW"
-    worker.vm.network "private_network", ip: "192.168.56.111"
+  # Configuration du serveur K3s
+  config.vm.define "#{username}S" do |server|
+    server.vm.hostname = "#{username}S" # Définition du nom d'hôte
+    server.vm.synced_folder ".", "/vagrant" # Synchronisation du dossier local avec le dossier /vagrant sur la VM
+    server.vm.network "private_network", ip: SERVER_IP # Configuration du réseau privé et de l'adresse IP du serveur
+    server.vm.provision "shell", privileged: true, path: "./scripts.sh", args: ["server", SERVER_IP] # Exécution du script k3s_setup.sh pour le serveur
+  
+  # Désactivation de l'option SharedFoldersEnableSymlinksCreate pour éviter les erreurs liées aux liens symboliques
+  config.vm.synced_folder ".", "/vagrant", SharedFoldersEnableSymlinksCreate: false
+end
 
-    worker.vm.provider "virtualbox" do |vb|
-      vb.memory = "2048"
-      vb.cpus = cpus_per_vm
-      vb.name = "bhamdiSW"
-    end
-
-    worker.vm.provision "shell", path: "./scripts.sh", args: "worker"
+  # Configuration du worker K3s
+  config.vm.define "#{username}SW" do |worker|
+    worker.vm.hostname = "#{username}SW" # Définition du nom d'hôte
+    worker.vm.synced_folder ".", "/vagrant" # Synchronisation du dossier local avec le dossier /vagrant sur la VM
+    worker.vm.network "private_network", ip: WORKER_IP # Configuration du réseau privé et de l'adresse IP du worker
+    worker.vm.provision "shell", privileged: true, path: "./scripts.sh", args: ["agent", WORKER_IP, SERVER_IP] # Exécution du script k3s_setup.sh pour le worker
   end
 end

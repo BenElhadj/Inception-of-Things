@@ -14,9 +14,8 @@ assurer vous d'avoir ton VirtualBox ouvert
 vagrant up / vagrant reload 
 vagrant ssh 
 
-scp -r ../../vagrant/bonus ../../vagrant/p* .
-cd p1
-vagrant up / vagrant reload 
+scp -r ../../vagrant/bonus ../../vagrant/p* . && cd p1 && vagrant up
+vagrant reload 
 
 vagrant ssh bhamdiS
 vagrant ssh bhamdiSW
@@ -47,3 +46,27 @@ vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant .vagrant.d Vi
 cd && rm -rf p* bonus/ VirtualBox\ VMs/ .config/ .vagrant.d/
 cp -rf .bash_logoutOld .bash_logout && cp -rf .bashrcOld .bashrc && cp -rf .cacheOld/ .cache && cp -rf .profileOld .profile
 scp -r ../../vagrant/bonus ../../vagrant/p* . && cd p1 && vagrant up
+
+
+
+pour tester le p1
+
+cd p1
+vagrant up
+
+vagrant ssh bhamdiS
+dans un autre terminale et au memme dossier
+vagrant ssh bhamdiSW
+
+k get nodes -o wide
+
+k describe node bhamdiS
+k describe node bhamdiSW
+
+ifconfig eth1
+
+vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant .vagrant.d VirtualBoxVMs ~/VirtualBox\ VMs ./scripts  
+
+
+
+pour tester le p2
