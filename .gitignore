@@ -2,3 +2,6 @@
 .vagrant
 .vagrant.d
 VirtualBoxVMs
+p2/test/
+proxychains-ng/
+tttt

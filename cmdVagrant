@@ -1,0 +1,101 @@
+echo 'plugins=(git
+            zsh-autosuggestions
+            )' >> ~/.zshrc
+******************************
+echo "export VBOX_USER_HOME=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/.configVB\"" >> ~/.zshrc
+echo "export VAGRANT_HOME=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/.vagrant.d\"" >> ~/.zshrc
+echo "export VBOX_MSI_INSTALL_PATH=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs\"" >> ~/.zshrc
+echo "export VBOX_MSI_INSTALL_PATH=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs\"" >> ~/.bashrc
+
+source ~/.zshrc
+assurer vous d'avoir ton VirtualBox ouvert
+########################################
+
+# vagrant up / vagrant reload 
+# vagrant ssh 
+
+# scp -r ../../vagrant/bonus ../../vagrant/p* . && cd p1 && vagrant up
+# vagrant reload 
+# pour appliquer des modification sur la machine deja creer
+# vagrant halt
+# vagrant up
+# vagrant provision
+
+# vagrant ssh bhamdiS
+# vagrant ssh bhamdiSW
+
+# sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+
+# vagrant@bhamdiS:~$ kubectl get nodes -o wide
+
+# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant .vagrant.d VirtualBoxVMs ~/VirtualBox\ VMs
+
+# en cas de probleme dans la machine vagrant@Inseption-Of-Things pour eviter de tout reinstaller
+
+# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant .vagrant.d VirtualBoxVMs ~/VirtualBox\ VMs ./scripts  
+# cd && rm -rf p* bonus/ VirtualBox\ VMs/ .config/ .vagrant.d/
+# cp -rf .bash_logoutOld .bash_logout && cp -rf .bashrcOld .bashrc && cp -rf .cacheOld/ .cache && cp -rf .profileOld .profile
+# scp -r ../../vagrant/bonus ../../vagrant/p* . && cd p1 && vagrant up
+
+
+pour tester le p1
+
+en cas ou il y a une message d'erreur de virtualbox
+vagrant box remove generic/ubuntu2004
+
+cd p1
+vagrant up
+
+vagrant ssh bhamdiS
+dans un autre terminale et au memme dossier
+vagrant ssh bhamdiSW
+
+vagrant global-status 
+
+k get nodes -o wide
+
+k describe node bhamdiS
+k describe node bhamdiSW
+
+ifconfig eth1
+
+vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../.vagrant.d ../VirtualBoxVMs ~/VirtualBox\ VMs scripts
+
+
+pour tester le p2
+
+git clone https://github.com/rofl0r/proxychains-ng.git
+cd proxychains-ng
+./configure --prefix=$HOME/.local
+make
+make install
+mkdir -p ~/.proxychains
+cp src/proxychains.conf ~/.proxychains/
+echo "http 192.168.56.110 app1.com 8081" >> ~/.proxychains/proxychains.conf
+echo "http 192.168.56.110 app2.com 8082" >> ~/.proxychains/proxychains.conf
+echo "http 192.168.56.110 app3.com 8083" >> ~/.proxychains/proxychains.conf
+
+
+
+cd p2
+vagrant up
+
+vagrant ssh bhamdiS
+
+k get nodes
+
+k apply -f /vagrant/scripts/app1.yml
+k apply -f /vagrant/scripts/app2.yml
+k apply -f /vagrant/scripts/app3.yml
+k apply -f /vagrant/scripts/services.yml
+
+k apply -f /vagrant/scripts/ingress.yml
+
+k get deployments
+k get services
+k get ingress
+
+
+
+vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../.vagrant.d ../VirtualBoxVMs ~/VirtualBox\ VMs
+
