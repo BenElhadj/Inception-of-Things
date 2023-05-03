@@ -26,7 +26,8 @@ Vagrant.configure("2") do |config|
   
     config.vm.provision "shell", inline: <<-SHELL
       sudo apt-get update -q
-      sudo apt-get install -y virtualbox vagrant sshpass -q
+      sudo apt-get install -y virtualbox vagrant net-tools sshpass -q
+
     SHELL
 
     config.vm.provision "shell", inline: <<-SHELL

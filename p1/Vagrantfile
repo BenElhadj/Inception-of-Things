@@ -14,24 +14,30 @@ WORKER_IP = "192.168.56.111"
 Vagrant.configure("2") do |config|
   # Spécification de la box et du provider à utiliser
   config.vm.box = "generic/ubuntu2004"
-  config.vm.provider "virtualbox" do |vb|
-    vb.memory = "2048"
-    vb.cpus = cpus_per_vm
-  end
 
   # Configuration du serveur K3s
   config.vm.define "#{username}S" do |server|
+    server.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"
+      vb.cpus = cpus_per_vm
+      vb.name = "#{username}S" # Définition du nom dans virtualbox
+    end
     server.vm.hostname = "#{username}S" # Définition du nom d'hôte
     server.vm.synced_folder ".", "/vagrant" # Synchronisation du dossier local avec le dossier /vagrant sur la VM
     server.vm.network "private_network", ip: SERVER_IP # Configuration du réseau privé et de l'adresse IP du serveur
     server.vm.provision "shell", privileged: true, path: "./scripts.sh", args: ["server", SERVER_IP] # Exécution du script k3s_setup.sh pour le serveur
-  
+  end
+
   # Désactivation de l'option SharedFoldersEnableSymlinksCreate pour éviter les erreurs liées aux liens symboliques
   config.vm.synced_folder ".", "/vagrant", SharedFoldersEnableSymlinksCreate: false
-end
 
   # Configuration du worker K3s
   config.vm.define "#{username}SW" do |worker|
+    worker.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"
+      vb.cpus = cpus_per_vm
+      vb.name = "#{username}SW" # Définition du nom dans virtualbox
+    end
     worker.vm.hostname = "#{username}SW" # Définition du nom d'hôte
     worker.vm.synced_folder ".", "/vagrant" # Synchronisation du dossier local avec le dossier /vagrant sur la VM
     worker.vm.network "private_network", ip: WORKER_IP # Configuration du réseau privé et de l'adresse IP du worker

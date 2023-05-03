@@ -2,10 +2,10 @@ echo 'plugins=(git
             zsh-autosuggestions
             )' >> ~/.zshrc
 ******************************
-echo 'export VBOX_USER_HOME="~/sgoinfre/Inception-of-Things/.configVB"' >> ~/.zshrc
-echo 'export VAGRANT_HOME="~/sgoinfre/Inception-of-Things/.vagrant.d"' >> ~/.zshrc
-echo 'export VBOX_MSI_INSTALL_PATH="~/sgoinfre/Inception-of-Things/VirtualBoxVMs"' >> ~/.zshrc
-echo 'export VBOX_MSI_INSTALL_PATH="~/sgoinfre/Inception-of-Things/VirtualBoxVMs"' >> ~/.bashrc
+echo "export VBOX_USER_HOME=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/.configVB\"" >> ~/.zshrc
+echo "export VAGRANT_HOME=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/.vagrant.d\"" >> ~/.zshrc
+echo "export VBOX_MSI_INSTALL_PATH=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs\"" >> ~/.zshrc
+echo "export VBOX_MSI_INSTALL_PATH=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs\"" >> ~/.bashrc
 
 source ~/.zshrc
 assurer vous d'avoir ton VirtualBox ouvert
@@ -42,7 +42,7 @@ cp -rf .bash_logout .bash_logoutOld && cp -rf .bashrc .bashrcOld && cp -rf .cach
 
 en cas de probleme dans la machine vagrant@Inseption-Of-Things pour eviter de tout reinstaller
 
-vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant .vagrant.d VirtualBoxVMs ~/VirtualBox\ VMs
+vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant .vagrant.d VirtualBoxVMs ~/VirtualBox\ VMs ./scripts  
 cd && rm -rf p* bonus/ VirtualBox\ VMs/ .config/ .vagrant.d/
 cp -rf .bash_logoutOld .bash_logout && cp -rf .bashrcOld .bashrc && cp -rf .cacheOld/ .cache && cp -rf .profileOld .profile
 scp -r ../../vagrant/bonus ../../vagrant/p* . && cd p1 && vagrant up
@@ -65,7 +65,11 @@ k describe node bhamdiSW
 
 ifconfig eth1
 
-vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant .vagrant.d VirtualBoxVMs ~/VirtualBox\ VMs ./scripts  
+vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../.vagrant.d ../VirtualBoxVMs ~/VirtualBox\ VMs scripts
 
 
 pour tester le p2
+
+
+en cas ou il y a une message d'erreur de virtualbox
+vagrant box remove generic/ubuntu2004
