@@ -3,7 +3,7 @@
 
 username = `whoami`.strip
 total_cpus = `nproc`.to_i
-cpus_per_vm = (total_cpus / 3.0).ceil
+cpus = (total_cpus / 3.0).ceil
 
 SERVER_IP = "192.168.56.110"
 
@@ -13,7 +13,7 @@ Vagrant.configure("2") do |config|
   config.vm.define "#{username}S" do |server|
     server.vm.provider "virtualbox" do |vb|
       vb.memory = "8192"
-      vb.cpus = cpus_per_vm
+      vb.cpus = cpus
       vb.name = "#{username}S"
     end
     server.vm.hostname = "#{username}S"

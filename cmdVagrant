@@ -8,6 +8,9 @@ echo "export VBOX_MSI_INSTALL_PATH=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception
 echo "export VBOX_MSI_INSTALL_PATH=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs\"" >> ~/.bashrc
 
 source ~/.zshrc
+
+VBoxManage setproperty machinefolder /mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs
+
 assurer vous d'avoir ton VirtualBox ouvert
 ########################################
 
@@ -24,15 +27,14 @@ assurer vous d'avoir ton VirtualBox ouvert
 # vagrant ssh bhamdiS
 # vagrant ssh bhamdiSW
 
-# sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+# sudo chmod +x /etc/rancher/k3s/k3s.yaml
 
 # vagrant@bhamdiS:~$ kubectl get nodes -o wide
 
-# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant VirtualBoxVMs ~/VirtualBox\ VMs
 
 # en cas de probleme dans la machine vagrant@Inseption-Of-Things pour eviter de tout reinstaller
 
-# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant VirtualBoxVMs ~/VirtualBox\ VMs ./scripts  
+# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant VirtualBoxVMs .vagrant.d ~/VirtualBox\ VMs ./scripts  
 # cd && rm -rf p* bonus/ VirtualBox\ VMs/ .config/
 # cp -rf .bash_logoutOld .bash_logout && cp -rf .bashrcOld .bashrc && cp -rf .cacheOld/ .cache && cp -rf .profileOld .profile
 # scp -r ../../vagrant/bonus ../../vagrant/p* . && cd p1 && vagrant up
@@ -44,6 +46,7 @@ en cas ou il y a une message d'erreur de virtualbox
 vagrant box remove generic/ubuntu2004
 
 cd p1
+chmod +x scripts.sh
 vagrant up
 
 vagrant ssh bhamdiS
@@ -59,25 +62,13 @@ k describe node bhamdiSW
 
 ifconfig eth1
 
-vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ~/VirtualBox\ VMs scripts
+vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ../.vagrant.d ~/VirtualBox\ VMs scripts
 
 
 pour tester le p2
 
-git clone https://github.com/rofl0r/proxychains-ng.git
-cd proxychains-ng
-./configure --prefix=$HOME/.local
-make
-make install
-mkdir -p ~/.proxychains
-cp src/proxychains.conf ~/.proxychains/
-echo "http 192.168.56.110 app1.com 8081" >> ~/.proxychains/proxychains.conf
-echo "http 192.168.56.110 app2.com 8082" >> ~/.proxychains/proxychains.conf
-echo "http 192.168.56.110 app3.com 8083" >> ~/.proxychains/proxychains.conf
-
-
-
 cd p2
+chmod +x ./scripts/*
 vagrant up
 
 vagrant ssh bhamdiS
@@ -88,7 +79,7 @@ k get all
 ifconfig eth1
 ip a
 k get svc
-curl -H "Host:app2.com" http://192.168.56.110:31226
+curl -H "Host:app2.com" 192.168.56.110
 k get ingress
 k -n kube-system get pods
 
@@ -96,16 +87,43 @@ k get deployments
 k get nodes
 k get services
 
-k apply -f /vagrant/scripts/app1.yml
-k apply -f /vagrant/scripts/app2.yml
-k apply -f /vagrant/scripts/app3.yml
-k apply -f /vagrant/scripts/services.yml
+dans le navigateur
+il faut activer ce plugin sur google chrome
+https://chrome.google.com/webstore/detail/proxy-switchyomega/padekgcemlokbadohgkifijomclgjgif
+et ajouter ces deux regles:
+    OmegaOptions/OmegaProfile_auto_switch.pac et 
+    OmegaOptions/OmegaProfile_Inception_of_Things.pac ou 
+    tout les parametre d'un coup avec OmegaOptions/OmegaOptions.bak
+puis activer le profile Inception-of-Things
 
-k apply -f /vagrant/scripts/ingress.yml
+et acceder a ces liens
+http://192.168.56.110/
+http://app1.com
+http://app2.com
+http://app3.com
 
-k get deployments
-k logs -n kube-system $(kubectl get pods -n kube-system -l k8s-app=metrics-server -o jsonpath='{.items[0].metadata.name}')
 
 
-vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ~/VirtualBox\ VMs
+pour tester le p3
+
+cd p3
+chmod +x ./scripts/*
+vagrant up
+
+vagrant ssh
+
+kubectl get namespaces
+
+k get pods -n argocd
+k get pods -n dev
+
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+
+
+
+
+# k logs -n kube-system $(kubectl get pods -n kube-system -l k8s-app=metrics-server -o jsonpath='{.items[0].metadata.name}')
+
+vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ../.vagrant.d ~/VirtualBox\ VMs
 

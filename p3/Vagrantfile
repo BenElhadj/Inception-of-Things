@@ -1,27 +1,24 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+SERVER_IP = "192.168.56.110"
 username = `whoami`.strip
 total_cpus = `nproc`.to_i
-cpus_per_vm = (total_cpus / 2.0).ceil
-
-SERVER_IP = "192.168.56.110"
+cpus = (total_cpus / 3.0).ceil
 
 Vagrant.configure("2") do |config|
-  
   config.vm.box = "generic/ubuntu2004"
   config.vm.define "#{username}S" do |server|
     server.vm.provider "virtualbox" do |vb|
-      vb.memory = "10240"
-      vb.cpus = cpus_per_vm
+      vb.memory = "8192"
+      vb.cpus = cpus
       vb.name = "#{username}S"
     end
     server.vm.hostname = "#{username}S"
     server.vm.synced_folder ".", "/vagrant"
     server.vm.network "private_network", ip: SERVER_IP
-    # server.vm.provision "shell", privileged: true, path: "scripts/scripts.sh", args: ["server", SERVER_IP]
     server.vm.provision "shell", privileged: true, path: "scripts/k3s_master.sh", args: [SERVER_IP]
     server.vm.provision "shell", privileged: true, path: "scripts/k3d_install.sh", args: [SERVER_IP]
-    server.vm.provision "shell", privileged: true, path: "scripts/argocd_install.sh", args: [SERVER_IP]
+    server.vm.provision "shell", privileged: false, path: "scripts/argocd_install.sh", args: [SERVER_IP]
   end
 end
