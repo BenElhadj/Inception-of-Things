@@ -28,12 +28,12 @@ assurer vous d'avoir ton VirtualBox ouvert
 
 # vagrant@bhamdiS:~$ kubectl get nodes -o wide
 
-# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant .vagrant.d VirtualBoxVMs ~/VirtualBox\ VMs
+# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant VirtualBoxVMs ~/VirtualBox\ VMs
 
 # en cas de probleme dans la machine vagrant@Inseption-Of-Things pour eviter de tout reinstaller
 
-# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant .vagrant.d VirtualBoxVMs ~/VirtualBox\ VMs ./scripts  
-# cd && rm -rf p* bonus/ VirtualBox\ VMs/ .config/ .vagrant.d/
+# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant VirtualBoxVMs ~/VirtualBox\ VMs ./scripts  
+# cd && rm -rf p* bonus/ VirtualBox\ VMs/ .config/
 # cp -rf .bash_logoutOld .bash_logout && cp -rf .bashrcOld .bashrc && cp -rf .cacheOld/ .cache && cp -rf .profileOld .profile
 # scp -r ../../vagrant/bonus ../../vagrant/p* . && cd p1 && vagrant up
 
@@ -59,7 +59,7 @@ k describe node bhamdiSW
 
 ifconfig eth1
 
-vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../.vagrant.d ../VirtualBoxVMs ~/VirtualBox\ VMs scripts
+vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ~/VirtualBox\ VMs scripts
 
 
 pour tester le p2
@@ -82,7 +82,19 @@ vagrant up
 
 vagrant ssh bhamdiS
 
+k get nodes -o wide
+k get all -n kube-system
+k get all
+ifconfig eth1
+ip a
+k get svc
+curl -H "Host:app2.com" http://192.168.56.110:31226
+k get ingress
+k -n kube-system get pods
+
+k get deployments
 k get nodes
+k get services
 
 k apply -f /vagrant/scripts/app1.yml
 k apply -f /vagrant/scripts/app2.yml
@@ -92,10 +104,8 @@ k apply -f /vagrant/scripts/services.yml
 k apply -f /vagrant/scripts/ingress.yml
 
 k get deployments
-k get services
-k get ingress
+k logs -n kube-system $(kubectl get pods -n kube-system -l k8s-app=metrics-server -o jsonpath='{.items[0].metadata.name}')
 
 
-
-vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../.vagrant.d ../VirtualBoxVMs ~/VirtualBox\ VMs
+vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ~/VirtualBox\ VMs
 

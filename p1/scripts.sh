@@ -6,7 +6,9 @@ SERVER_IP=$3
 
 # Installe les dépendances requises sur le nœud.
 install_dependencies() {
-  sudo apt-get update && sudo apt-get install -y net-tools
+  # sudo apt-get update && sudo apt-get install -y net-tools
+  sudo apt-get update && sudo apt-get upgrade && sudo apt-get install -y net-tools
+
 }
 
 # Affiche un message d'information.

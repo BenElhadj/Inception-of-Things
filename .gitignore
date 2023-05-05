@@ -3,5 +3,7 @@
 .vagrant.d
 VirtualBoxVMs
 p2/test/
+p3/test/
+bonus/test/
 proxychains-ng/
 tttt

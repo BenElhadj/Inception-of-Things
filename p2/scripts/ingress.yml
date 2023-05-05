@@ -2,6 +2,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: my-ingress
+
 spec:
   rules:
   - host: app1.com
@@ -24,7 +25,8 @@ spec:
             name: app-two-service
             port:
               number: 80
-  - http:
+  - host: app3.com
+    http:
       paths:
       - pathType: Prefix
         path: "/"
@@ -33,3 +35,13 @@ spec:
             name: app-three-service
             port:
               number: 80
+  - http:
+      paths:
+        - pathType: Prefix
+          path: "/"
+          backend:
+            service:
+              name: app-three-service
+              port:
+                number: 80
+---
