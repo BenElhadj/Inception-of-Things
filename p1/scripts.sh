@@ -7,7 +7,9 @@ SERVER_IP=$3
 # Installe les dépendances requises sur le nœud.
 install_dependencies() {
   # sudo apt-get update && sudo apt-get install -y net-tools
-  sudo apt-get update && sudo apt-get upgrade && sudo apt-get install -y net-tools
+  sudo apt-get update -q
+  sudo apt-get upgrade -yq
+  sudo apt-get install -yq net-tools vagrant sshpass x11-xkb-utils virtualbox
 
 }
 
@@ -34,6 +36,8 @@ install_k3s_server() {
 
   # Crée le dossier des scripts s'il n'existe pas.
   sudo mkdir -p /vagrant/scripts/
+  sudo chmod -R 777 /vagrant/scripts/
+
   
   # Copie le token du nœud du serveur vers le répertoire des scripts.
   sudo cp /var/lib/rancher/k3s/server/node-token /vagrant/scripts/

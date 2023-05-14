@@ -40,7 +40,9 @@ assurer vous d'avoir ton VirtualBox ouvert
 # scp -r ../../vagrant/bonus ../../vagrant/p* . && cd p1 && vagrant up
 
 
-pour tester le p1
+#####################
+# pour tester le p1 #
+#####################
 
 en cas ou il y a une message d'erreur de virtualbox
 vagrant box remove generic/ubuntu2004
@@ -48,14 +50,15 @@ vagrant box remove generic/ubuntu2004
 cd p1
 chmod +x scripts.sh
 vagrant up
+ 
+vagrant global-status
 
 vagrant ssh bhamdiS
-dans un autre terminale et au memme dossier
-vagrant ssh bhamdiSW
-
-vagrant global-status 
 
 k get nodes -o wide
+
+dans un autre terminale et au memme dossier
+vagrant ssh bhamdiSW
 
 k describe node bhamdiS
 k describe node bhamdiSW
@@ -65,19 +68,25 @@ ifconfig eth1
 vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ../.vagrant.d ~/VirtualBox\ VMs scripts
 
 
-pour tester le p2
+
+#####################
+# pour tester le p2 #
+#####################
 
 cd p2
 chmod +x ./scripts/*
 vagrant up
 
+vagrant global-status
+
 vagrant ssh bhamdiS
 
+ifconfig eth1
+
 k get nodes -o wide
+
 k get all -n kube-system
 k get all
-ifconfig eth1
-ip a
 k get svc
 curl -H "Host:app2.com" 192.168.56.110
 k get ingress
@@ -103,8 +112,18 @@ http://app2.com
 http://app3.com
 
 
+vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ../.vagrant.d ~/VirtualBox\ VMs scripts
 
-pour tester le p3
+
+#####################
+# pour tester le p3 #
+#####################
+
+La différence majeure entre K3S et K3D
+est que K3S déploie un cluster Kubernetes basé sur une machine virtuelle,
+tandis que K3D déploie des clusters Kubernetes K3S basés sur Docker,
+ce qui peut offrir une version plus évolutive de K3S
+et le rendre préférable au K3S standard
 
 cd p3
 chmod +x ./scripts/*
@@ -121,9 +140,13 @@ kubectl port-forward svc/argocd-server -n argocd 8080:443
 
 
 
-
-
 # k logs -n kube-system $(kubectl get pods -n kube-system -l k8s-app=metrics-server -o jsonpath='{.items[0].metadata.name}')
 
 vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ../.vagrant.d ~/VirtualBox\ VMs
+
+
+
+########################
+# pour tester le Bonus #
+########################
 
