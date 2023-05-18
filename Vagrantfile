@@ -23,6 +23,7 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
     vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
     vb.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
+    vb.customize ["modifyvm", :id, "--graphicscontroller", "vboxsvga"]
   end
 
   config.vm.synced_folder ".", "/home/vagrant/hote", type: "virtualbox", SharedFoldersEnableSymlinksCreate: false
