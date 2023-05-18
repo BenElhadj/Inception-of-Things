@@ -1,25 +1,54 @@
-echo 'plugins=(git
-            zsh-autosuggestions
-            )' >> ~/.zshrc
-******************************
-echo "export VBOX_USER_HOME=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/.configVB\"" >> ~/.zshrc
-echo "export VAGRANT_HOME=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/.vagrant.d\"" >> ~/.zshrc
-echo "export VBOX_MSI_INSTALL_PATH=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs\"" >> ~/.zshrc
-echo "export VBOX_MSI_INSTALL_PATH=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs\"" >> ~/.bashrc
+# pour avoir autosuggestions "c'est optionnel"
+# il faut ajouter zsh-autosuggestions au plagins
+# dans le fichier .zshrc comme suite
+# 'plugins=(git
+#             zsh-autosuggestions
+#             )'
 
-source ~/.zshrc
+#########################################
+# si l'espace sur le goinfre depace 28G #
+#########################################
+
+echo "export VBOX_USER_HOME=\"/goinfre/$(whoami)/Inception-of-Things/.configVB\"" >> ~/.zshrc
+echo "export VAGRANT_HOME=\"/goinfre/$(whoami)/Inception-of-Things/.vagrant.d\"" >> ~/.zshrc
+echo "export VBOX_MSI_INSTALL_PATH=\"/goinfre/$(whoami)/Inception-of-Things/VirtualBoxVMs\"" >> ~/.zshrc
+echo "export VBOX_MSI_INSTALL_PATH=\"/goinfre/$(whoami)/Inception-of-Things/VirtualBoxVMs\"" >> ~/.bashrc
+
+####################################################################################
+# pour changer le dossier par default de l'enregisrement de la VM dans Virtual Box #
+####################################################################################
+
+VBoxManage setproperty machinefolder /goinfre/$(whoami)/Inception-of-Things/VirtualBoxVMs
+
+###########################################
+# sinon il faut travailler sur l'sgoinfre #
+###########################################
+
+echo "export VBOX_USER_HOME=\"/sgoinfre/goinfre/Perso/$(whoami)/sgoinfre/Inception-of-Things/.configVB\"" >> ~/.zshrc
+echo "export VAGRANT_HOME=\"/sgoinfre/goinfre/Perso/$(whoami)/sgoinfre/Inception-of-Things/.vagrant.d\"" >> ~/.zshrc
+echo "export VBOX_MSI_INSTALL_PATH=\"/sgoinfre/goinfre/Perso/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs\"" >> ~/.zshrc
+echo "export VBOX_MSI_INSTALL_PATH=\"/sgoinfre/goinfre/Perso/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs\"" >> ~/.bashrc
+
+####################################################################################
+# pour changer le dossier par default de l'enregisrement de la VM dans Virtual Box #
+####################################################################################
 
 VBoxManage setproperty machinefolder /mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs
 
-assurer vous d'avoir ton VirtualBox ouvert
-########################################
+###########################################
 
-# vagrant up / vagrant reload 
+source ~/.zshrc
+
+##############################
+# les  principales commandes #
+##############################
+
+# vagrant up
+# vagrant reload 
 # vagrant ssh 
 
 # scp -r ../../vagrant/bonus ../../vagrant/p* . && cd p1 && vagrant up
-# vagrant reload 
-# pour appliquer des modification sur la machine deja creer
+
 # vagrant halt
 # vagrant up
 # vagrant provision
@@ -27,18 +56,14 @@ assurer vous d'avoir ton VirtualBox ouvert
 # vagrant ssh bhamdiS
 # vagrant ssh bhamdiSW
 
-# sudo chmod +x /etc/rancher/k3s/k3s.yaml
+# en cas de probleme dans la machine vagrant@Inseption-Of-Things pour eviter de retapper les commandes une par une
 
-# vagrant@bhamdiS:~$ kubectl get nodes -o wide
+# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant VirtualBoxVMs .vagrant.d ~/VirtualBox\ VMs 
 
 
-# en cas de probleme dans la machine vagrant@Inseption-Of-Things pour eviter de tout reinstaller
-
-# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant VirtualBoxVMs .vagrant.d ~/VirtualBox\ VMs ./scripts  
-# cd && rm -rf p* bonus/ VirtualBox\ VMs/ .config/
-# cp -rf .bash_logoutOld .bash_logout && cp -rf .bashrcOld .bashrc && cp -rf .cacheOld/ .cache && cp -rf .profileOld .profile
-# scp -r ../../vagrant/bonus ../../vagrant/p* . && cd p1 && vagrant up
-
+###################################################################
+# avant de commencer assurer vous d'avoir votre VirtualBox ouvert #
+###################################################################
 
 #####################
 # pour tester le p1 #
@@ -65,7 +90,7 @@ k describe node bhamdiSW
 
 ifconfig eth1
 
-vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ../.vagrant.d ~/VirtualBox\ VMs scripts
+vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ../.vagrant.d ~/VirtualBox\ VMs ./scripts/
 
 
 
@@ -112,7 +137,7 @@ http://app2.com
 http://app3.com
 
 
-vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ../.vagrant.d ~/VirtualBox\ VMs scripts
+vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ../.vagrant.d ~/VirtualBox\ VMs
 
 
 #####################
