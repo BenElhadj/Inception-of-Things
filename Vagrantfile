@@ -26,7 +26,12 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--graphicscontroller", "vboxsvga"]
   end
 
-  config.vm.synced_folder ".", "/home/vagrant/hote", type: "virtualbox", SharedFoldersEnableSymlinksCreate: false
+  # config.vm.synced_folder ".", "/home/vagrant/hote", type: "virtualbox", SharedFoldersEnableSymlinksCreate: false
+
+  config.vm.synced_folder ".", "/home/vagrant/hote", 
+  type: "virtualbox", 
+  SharedFoldersEnableSymlinksCreate: false, 
+  mount_options: ["dmode=777","fmode=666"]
 
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
@@ -36,7 +41,7 @@ Vagrant.configure("2") do |config|
     apt-get update -q
     apt-get upgrade -yq
     # Install required packages
-    apt-get install -yq sudo virtualbox vagrant net-tools sshpass
+    apt-get install -yq sudo virtualbox vagrant virtualbox-guest-dkms net-tools sshpass
     # Add user
     useradd -m -s /bin/bash $username
     # Set password and give sudo access
@@ -117,7 +122,10 @@ Vagrant.configure("2") do |config|
     # Créer le dossier sur le bureau
     mkdir -p /home/$username/Desktop/IOT
     # Copier les fichiers
-    rsync -a /home/vagrant/hote/ /home/$username/Desktop/IOT/
+    rsync -a /home/vagrant/hote/p1 /home/$username/Desktop/IOT/
+    rsync -a /home/vagrant/hote/p2 /home/$username/Desktop/IOT/
+    rsync -a /home/vagrant/hote/p3 /home/$username/Desktop/IOT/
+    rsync -a /home/vagrant/hote/bonus /home/$username/Desktop/IOT/
     # Donner tous les droits
     chmod -R 777 /home/$username/Desktop/IOT
     # Assurez-vous que l'utilisateur est le propriétaire du dossier
