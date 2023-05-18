@@ -23,10 +23,6 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
     vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
     vb.customize ["modifyvm", :id, "--nested-hw-virt", "on"]
-    vb.customize ["modifyvm", :id, "--vram", "128"]
-    vb.customize ["modifyvm", :id, "--graphicscontroller", "vboxsvga"]
-    vb.customize ["modifyvm", :id, "--accelerate3d", "on"]
-    vb.customize ["modifyvm", :id, "--accelerate2dvideo", "on"]
   end
 
   config.vm.synced_folder ".", "/home/vagrant/hote", type: "virtualbox", SharedFoldersEnableSymlinksCreate: false
@@ -34,30 +30,19 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
     echo "============= Configuration d'utilisateur =============="
-    echo "========================================================"
-      
-    username=$1
-      
+    echo "========================================================"      
+    username=$1      
     apt-get update -q
     apt-get upgrade -yq
-
     # Install required packages
-    apt-get install -yq sudo virtualbox vagrant net-tools sshpass libpam-gnome-keyring
-
+    apt-get install -yq sudo virtualbox vagrant net-tools sshpass
     # Add user
     useradd -m -s /bin/bash $username
-
     # Set password and give sudo access
     echo "$username:iot42" | sudo chpasswd
     usermod -aG sudo $username
-
     # Disable password
     passwd -d $username
-
-    # Disable GNOME Keyring
-    echo "auth    optional        pam_gnome_keyring.so" >> /etc/pam.d/login
-    echo "session optional        pam_gnome_keyring.so auto_start" >> /etc/pam.d/login
-
     # Set lightdm to auto login our user
     echo "[Seat:*]" > /etc/lightdm/lightdm.conf.d/50-autologin.conf
     echo "autologin-user=$username" >> /etc/lightdm/lightdm.conf.d/50-autologin.conf
@@ -67,39 +52,31 @@ Vagrant.configure("2") do |config|
     echo "========================================================"
     echo "============ Installation de Google Chrome ============="
     echo "========================================================"
-
     # Ajoutez la clé du dépôt Google à apt
     wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-    
     # Ajoutez le dépôt Google à la liste des sources de packages
     echo 'deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main' | sudo tee /etc/apt/sources.list.d/google.list
-    
     # Mettez à jour la liste des packages et installez Google Chrome
     sudo apt-get update
     sudo apt-get install -y google-chrome-stable
-
   SHELL
 
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
     echo "============== Création du raccourci Chrome ==========="
     echo "========================================================"
-
     username=$1
-
     # Créer le répertoire Desktop si il n'existe pas
     mkdir -p /home/$username/Desktop
-
     # Création du fichier .desktop
     echo "[Desktop Entry]
     Version=1.0
     Name=Google Chrome
-    Exec=/usr/bin/google-chrome-stable %U
+    Exec=/usr/bin/google-chrome-stable %U --password-store=basic
     Terminal=false
     Icon=google-chrome
     Type=Application
     Categories=Network;WebBrowser;" > /home/$username/Desktop/chrome.desktop
-
     # Rendre le raccourci exécutable
     chmod +x /home/$username/Desktop/chrome.desktop
   SHELL
@@ -108,55 +85,49 @@ Vagrant.configure("2") do |config|
     echo "========================================================"
     echo "================= Installation de ZSH =================="
     echo "========================================================"
-
     # Installez zsh
     sudo apt-get install -y zsh
-
     # Téléchargez l'installateur de Oh My Zsh dans /usr/local
     sudo wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O /ohmyzsh-install.sh
-
     # Rendre le script exécutable
     sudo chmod a+x /ohmyzsh-install.sh
   SHELL
 
-  config.vm.provision "shell", privileged: false, args: username, inline: <<-SHELL
+  config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
     echo "================= Exécution du script Oh My Zsh ========"
     echo "========================================================"
-
     username=$1
-
     # Exécute le script en tant qu'utilisateur non privilégié
-    sudo -u $username /ohmyzsh-install.sh --unattended
-
-    # Définit Zsh comme shell par défaut pour l'utilisateur
-    chsh -s $(which zsh) $username
+    sudo -u $username sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+    # Définit Zsh comme shell par défaut pour l'utilisateur avec sudo
+    sudo chsh -s $(which zsh) $username
   SHELL
 
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
     echo "=============== Création du dossier IOT ================"
     echo "========================================================"
-
     username=$1
-
+    # Assurez-vous que le dossier de l'hôte est monté
+    while [ ! -d /home/vagrant/hote ]; do
+      sleep 1
+    done
     # Créer le dossier sur le bureau
     mkdir -p /home/$username/Desktop/IOT
-
     # Copier les fichiers
-    cp -r /home/vagrant/hote/* /home/$username/Desktop/IOT
-
+    rsync -a /home/vagrant/hote/ /home/$username/Desktop/IOT/
     # Donner tous les droits
     chmod -R 777 /home/$username/Desktop/IOT
+    # Assurez-vous que l'utilisateur est le propriétaire du dossier
+    chown -R $username:$username /home/$username/Desktop/IOT
   SHELL
 
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
     echo "======================= reboot ========================="
     echo "========================================================"
-
     sudo reboot
-
   SHELL
 
 end

@@ -24,10 +24,10 @@ VBoxManage setproperty machinefolder /goinfre/$(whoami)/Inception-of-Things/Virt
 # sinon il faut travailler sur l'sgoinfre #
 ###########################################
 
-echo "export VBOX_USER_HOME=\"/sgoinfre/goinfre/Perso/$(whoami)/sgoinfre/Inception-of-Things/.configVB\"" >> ~/.zshrc
-echo "export VAGRANT_HOME=\"/sgoinfre/goinfre/Perso/$(whoami)/sgoinfre/Inception-of-Things/.vagrant.d\"" >> ~/.zshrc
-echo "export VBOX_MSI_INSTALL_PATH=\"/sgoinfre/goinfre/Perso/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs\"" >> ~/.zshrc
-echo "export VBOX_MSI_INSTALL_PATH=\"/sgoinfre/goinfre/Perso/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs\"" >> ~/.bashrc
+echo "export VBOX_USER_HOME=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/.configVB\"" >> ~/.zshrc
+echo "export VAGRANT_HOME=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/.vagrant.d\"" >> ~/.zshrc
+echo "export VBOX_MSI_INSTALL_PATH=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs\"" >> ~/.zshrc
+echo "export VBOX_MSI_INSTALL_PATH=\"/mnt/nfs/homes/$(whoami)/sgoinfre/Inception-of-Things/VirtualBoxVMs\"" >> ~/.bashrc
 
 ####################################################################################
 # pour changer le dossier par default de l'enregisrement de la VM dans Virtual Box #

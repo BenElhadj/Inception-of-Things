@@ -2,6 +2,7 @@
 .vagrant
 .vagrant.d
 VirtualBoxVMs
+p1/scripts/
 p2/test/
 p3/test/
 bonus/test/
