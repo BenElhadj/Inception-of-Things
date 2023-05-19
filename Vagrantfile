@@ -7,7 +7,7 @@ Vagrant.configure("2") do |config|
   
   config.vm.box = "angelv/ubuntu_22.04"
   config.vm.box_version = "1.0.0"
-  
+  # Configuration du nom d'hôte
   config.vm.define "Inseption-Of-Things" do |iot|
     iot.vm.hostname = "Inseption-Of-Things"
   end
@@ -15,10 +15,12 @@ Vagrant.configure("2") do |config|
   total_cpus = `nproc`.to_i
   assigned_cpus = (total_cpus * 2 / 3.0).ceil
   
+  # Attribution des ressources système à la VM
   config.vm.provider "virtualbox" do |vb|
     vb.memory = 10240
     vb.cpus = assigned_cpus
     
+    # Configuration de l'interface graphique et des paramètres de la machine virtuelle
     vb.gui = true
     vb.customize ["modifyvm", :id, "--clipboard", "bidirectional"]
     vb.customize ["modifyvm", :id, "--draganddrop", "bidirectional"]
@@ -26,13 +28,13 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--graphicscontroller", "vboxsvga"]
   end
 
-  # config.vm.synced_folder ".", "/home/vagrant/hote", type: "virtualbox", SharedFoldersEnableSymlinksCreate: false
-
+  # Configuration du partage de dossier
   config.vm.synced_folder ".", "/home/vagrant/hote", 
   type: "virtualbox", 
   SharedFoldersEnableSymlinksCreate: false, 
   mount_options: ["dmode=777","fmode=666"]
 
+  # Script de configuration d'utilisateur
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
     echo "============= Configuration d'utilisateur =============="
@@ -47,6 +49,8 @@ Vagrant.configure("2") do |config|
     # Set password and give sudo access
     echo "$username:iot42" | sudo chpasswd
     usermod -aG sudo $username
+    # Modify sudoers file to give passwordless sudo access
+    echo "$username ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
     # Disable password
     passwd -d $username
     # Set lightdm to auto login our user
@@ -54,6 +58,7 @@ Vagrant.configure("2") do |config|
     echo "autologin-user=$username" >> /etc/lightdm/lightdm.conf.d/50-autologin.conf
   SHELL
 
+  # Script d'installation de Google Chrome
   config.vm.provision "shell", privileged: true, inline: <<-SHELL
     echo "========================================================"
     echo "============ Installation de Google Chrome ============="
@@ -67,6 +72,7 @@ Vagrant.configure("2") do |config|
     sudo apt-get install -y google-chrome-stable
   SHELL
 
+  # Script de création de raccourci pour Google Chrome
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
     echo "============== Création du raccourci Chrome ==========="
@@ -87,29 +93,44 @@ Vagrant.configure("2") do |config|
     chmod +x /home/$username/Desktop/chrome.desktop
   SHELL
 
-  config.vm.provision "shell", privileged: true, inline: <<-SHELL
+  # Script d'installation de ZSH
+  config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
     echo "================= Installation de ZSH =================="
     echo "========================================================"
+    username=$1
     # Installez zsh
     sudo apt-get install -y zsh
-    # Téléchargez l'installateur de Oh My Zsh dans /usr/local
-    sudo wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O /ohmyzsh-install.sh
+    # Téléchargez l'installateur de Oh My Zsh dans le répertoire de l'utilisateur
+    sudo -u $username wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O /home/$username/ohmyzsh-install.sh
+    # Changer le propriétaire du fichier
+    sudo chown $username:$username /home/$username/ohmyzsh-install.sh
     # Rendre le script exécutable
-    sudo chmod a+x /ohmyzsh-install.sh
+    # sudo chmod 777 /home/$username/ohmyzsh-install.sh
+    sudo chmod +xrwd /home/$username/ohmyzsh-install.sh
+    # Exécute le script en tant qu'utilisateur non privilégié
+    sudo -u $username sh -c "$(cat /home/$username/ohmyzsh-install.sh)" "" --unattended
+    # Définit Zsh comme shell par défaut pour l'utilisateur
+    sudo chsh -s $(which zsh) $username
+    sudo chmod +xrwd /home/bhamdi/.zshrc
+    echo "ZSH_THEME='robbyrussell'" >> /home/$username/.zshrc
   SHELL
 
+  # Script d'exécution d'Oh My Zsh
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
     echo "================= Exécution du script Oh My Zsh ========"
     echo "========================================================"
     username=$1
     # Exécute le script en tant qu'utilisateur non privilégié
-    sudo -u $username sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
-    # Définit Zsh comme shell par défaut pour l'utilisateur avec sudo
+    sudo -u $username sh -c "$(cat /home/$username/ohmyzsh-install.sh)" "" --unattended
+    # Définit Zsh comme shell par défaut pour l'utilisateur
     sudo chsh -s $(which zsh) $username
+    echo "ZSH_THEME='robbyrussell'" >> /home/$username/.zshrc
   SHELL
 
+
+  # Script de création du dossier IOT
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
     echo "=============== Création du dossier IOT ================"
@@ -126,12 +147,14 @@ Vagrant.configure("2") do |config|
     rsync -a /home/vagrant/hote/p2 /home/$username/Desktop/IOT/
     rsync -a /home/vagrant/hote/p3 /home/$username/Desktop/IOT/
     rsync -a /home/vagrant/hote/bonus /home/$username/Desktop/IOT/
+    rsync -a /home/vagrant/hote/cmdVagrant /home/$username/Desktop/IOT/
     # Donner tous les droits
     chmod -R 777 /home/$username/Desktop/IOT
     # Assurez-vous que l'utilisateur est le propriétaire du dossier
     chown -R $username:$username /home/$username/Desktop/IOT
   SHELL
 
+  # Script de redémarrage
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
     echo "======================= reboot ========================="
