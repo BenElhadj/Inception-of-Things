@@ -106,13 +106,12 @@ Vagrant.configure("2") do |config|
     # Changer le propriétaire du fichier
     sudo chown $username:$username /home/$username/ohmyzsh-install.sh
     # Rendre le script exécutable
-    # sudo chmod 777 /home/$username/ohmyzsh-install.sh
-    sudo chmod +xrwd /home/$username/ohmyzsh-install.sh
+    sudo chmod +rwd /home/$username/ohmyzsh-install.sh
     # Exécute le script en tant qu'utilisateur non privilégié
     sudo -u $username sh -c "$(cat /home/$username/ohmyzsh-install.sh)" "" --unattended
     # Définit Zsh comme shell par défaut pour l'utilisateur
     sudo chsh -s $(which zsh) $username
-    sudo chmod +xrwd /home/bhamdi/.zshrc
+    sudo chmod +rwd /home/bhamdi/.zshrc
     echo "ZSH_THEME='robbyrussell'" >> /home/$username/.zshrc
   SHELL
 
