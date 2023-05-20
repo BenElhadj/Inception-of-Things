@@ -150,20 +150,42 @@ tandis que K3D déploie des clusters Kubernetes K3S basés sur Docker,
 ce qui peut offrir une version plus évolutive de K3S
 et le rendre préférable au K3S standard
 
+K3s et K3d sont deux outils différents qui servent des buts similaires mais dans des contextes légèrement différents. Ils sont tous deux utilisés pour déployer des clusters Kubernetes, mais le font de différentes manières.
+K3s est une distribution légère de Kubernetes. Elle est destinée aux environnements avec des ressources limitées, comme les appareils IoT (Internet des objets) ou les petites instances de serveur. K3s élimine plusieurs fonctionnalités non essentielles généralement trouvées dans les distributions Kubernetes standard pour réduire la consommation de ressources système. Malgré sa taille réduite, K3s reste une distribution Kubernetes entièrement fonctionnelle et peut être utilisée pour héberger des applications dans une multitude d'environnements.
+K3d est un outil qui permet de créer des clusters K3s dans Docker. En d'autres termes, il vous permet d'exécuter K3s comme un conteneur Docker, ce qui est très utile pour les environnements de développement ou de test. Avec K3d, vous pouvez rapidement créer et détruire des clusters K3s sur votre machine locale, ce qui facilite le test de vos applications dans un environnement similaire à celui d'un cluster Kubernetes réel.
+En résumé, K3s est une distribution légère de Kubernetes, tandis que K3d est un outil pour exécuter cette distribution légère dans Docker.
+
 cd p3
-chmod +x ./scripts/*
-vagrant up
+# chmod +x ./scripts/*
+# vagrant up
 
-vagrant ssh
+# vagrant ssh
 
-kubectl get namespaces
+# kubectl get namespaces
 
-k get pods -n argocd
-k get pods -n dev
+# k get pods -n argocd
+# k get pods -n dev
 
-kubectl port-forward svc/argocd-server -n argocd 8080:443
+# kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+sudo docker ps -a
+sudo docker stop $(docker ps -a -q)
+sudo docker rm $(docker ps -a -q)
+
+sudo docker images -a
+sudo docker rmi $(docker images -q)
+
+sudo docker volume ls
+sudo docker volume rm $(docker volume ls -q)
 
 
+
+
+# sudo docker build -t $(whoami)/myproject .
+sudo docker build -t my-k3d-argocd-app .
+sudo docker run -d -p 8888:8888 -p 8080:8080 --name=my-running-app my-k3d-argocd-app
+http://localhost:8888
+https://localhost:8080
 
 # k logs -n kube-system $(kubectl get pods -n kube-system -l k8s-app=metrics-server -o jsonpath='{.items[0].metadata.name}')
 

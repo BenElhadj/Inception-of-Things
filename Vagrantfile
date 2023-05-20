@@ -29,9 +29,15 @@ Vagrant.configure("2") do |config|
   end
 
   # Configuration du partage de dossier
-  config.vm.synced_folder ".", "/home/vagrant/hote", 
+  config.vm.synced_folder ".", "/hote", 
   type: "virtualbox", 
-  SharedFoldersEnableSymlinksCreate: false, 
+  SharedFoldersEnableSymlinksCreate: true, 
+  mount_options: ["dmode=777","fmode=666"]
+
+  # Configuration du partage de dossier
+  config.vm.synced_folder "~/.ssh", "/ssh", 
+  type: "virtualbox", 
+  SharedFoldersEnableSymlinksCreate: true, 
   mount_options: ["dmode=777","fmode=666"]
 
   # Script de configuration d'utilisateur
@@ -96,45 +102,43 @@ Vagrant.configure("2") do |config|
   SHELL
 
   # Script d'installation de ZSH
-  # config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
-  #   echo "========================================================"
-  #   echo "================= Installation de ZSH =================="
-  #   echo "========================================================"
-  #   username=$1
-  #   # Installez zsh
-  #   sudo apt-get install -y zsh
-  #   # Téléchargez l'installateur de Oh My Zsh dans le répertoire de l'utilisateur
-  #   sudo -u $username wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O /home/$username/ohmyzsh-install.sh
-  #   # Changer le propriétaire du fichier
-  #   sudo chown $username:$username /home/$username/ohmyzsh-install.sh
-  #   # Rendre le script exécutable
-  #   sudo chmod 777 /home/$username/ohmyzsh-install.sh
-  #   # Exécute le script en tant qu'utilisateur non privilégié
-  #   sudo -u $username sh -c "$(cat /home/$username/ohmyzsh-install.sh)" "" --unattended
-  #   # Définit Zsh comme shell par défaut pour l'utilisateur
-  #   sudo chsh -s $(which zsh) $username
-  #   sudo chmod 777 /home/bhamdi/.zshrc
-  #   echo "ZSH_THEME='robbyrussell'" >> /home/$username/.zshrc
-  # SHELL
-  config.vm.provision "shell", privileged: false, args: username, inline: <<-SHELL
-    echo "================= Installation de ZSH =================="
-    sudo apt-get install -y zsh
-    sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    echo "ZSH_THEME='robbyrussell'" >> ~/.zshrc
-  SHELL
-  # Script d'exécution d'Oh My Zsh
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
-    echo "================= Exécution du script Oh My Zsh ========"
+    echo "================= Installation de ZSH =================="
     echo "========================================================"
     username=$1
+    # Installez zsh
+    sudo apt-get install -y zsh
+    # Téléchargez l'installateur de Oh My Zsh dans le répertoire de l'utilisateur
+    sudo -u $username wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O /home/$username/ohmyzsh-install.sh
+    sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    # Changer le propriétaire du fichier
+    sudo chown $username:$username /home/$username/ohmyzsh-install.sh
+    # Rendre le script exécutable
+    sudo chmod 777 /home/$username/ohmyzsh-install.sh
     # Exécute le script en tant qu'utilisateur non privilégié
     sudo -u $username sh -c "$(cat /home/$username/ohmyzsh-install.sh)" "" --unattended
-    # Définit Zsh comme shell par défaut pour l'utilisateur
-    sudo chsh -s $(which zsh) $username
+    # # Définit Zsh comme shell par défaut pour l'utilisateur
+    # sudo chsh -s $(which zsh) $username
+    # sudo chmod 777 /home/bhamdi/.zshrc
     echo "ZSH_THEME='robbyrussell'" >> /home/$username/.zshrc
   SHELL
 
+  # Script d'installation de Docker
+  config.vm.provision "shell", privileged: true, inline: <<-SHELL
+    echo "========================================================"
+    echo "================ Installation de Docker ================"
+    echo "========================================================"
+    sudo apt-get update -q
+    sudo apt-get upgrade -yq
+    sudo apt-get install -yq apt-transport-https ca-certificates curl software-properties-common
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    sudo apt-get update
+    sudo apt-get install -yq docker-ce docker-ce-cli containerd.io
+    sudo usermod -aG docker $USER
+    newgrp docker 
+  SHELL
 
   # Script de création du dossier IOT
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
@@ -142,18 +146,13 @@ Vagrant.configure("2") do |config|
     echo "=============== Création du dossier IOT ================"
     echo "========================================================"
     username=$1
-    # Assurez-vous que le dossier de l'hôte est monté
-    while [ ! -d /home/vagrant/hote ]; do
-      sleep 1
-    done
-    # Créer le dossier sur le bureau
-    mkdir -p /home/$username/Desktop/IOT
-    # Copier les fichiers
-    rsync -a /home/vagrant/hote/p1 /home/$username/Desktop/IOT/
-    rsync -a /home/vagrant/hote/p2 /home/$username/Desktop/IOT/
-    rsync -a /home/vagrant/hote/p3 /home/$username/Desktop/IOT/
-    rsync -a /home/vagrant/hote/bonus /home/$username/Desktop/IOT/
-    rsync -a /home/vagrant/hote/cmdVagrant /home/$username/Desktop/IOT/
+    # Copier les dossiers IOT et .ssh
+    rsync -a /ssh/* /home/$username/.ssh/
+    rsync -a /hote/p1 /home/$username/Desktop/IOT/
+    rsync -a /hote/p2 /home/$username/Desktop/IOT/
+    rsync -a /hote/p3 /home/$username/Desktop/IOT/
+    rsync -a /hote/bonus /home/$username/Desktop/IOT/
+    rsync -a /hote/cmdVagrant /home/$username/Desktop/IOT/
     # Donner tous les droits
     chmod -R 777 /home/$username/Desktop/IOT
     # Assurez-vous que l'utilisateur est le propriétaire du dossier
