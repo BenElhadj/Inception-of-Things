@@ -59,6 +59,7 @@ Vagrant.configure("2") do |config|
     usermod -aG sudo $username
     # Modify sudoers file to give passwordless sudo access
     echo "$username ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee -a /etc/sudoers
+    echo "$username ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/$username
     # Disable password
     passwd -d $username
     # Set lightdm to auto login our user
