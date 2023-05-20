@@ -40,10 +40,12 @@ Vagrant.configure("2") do |config|
     echo "============= Configuration d'utilisateur =============="
     echo "========================================================"      
     username=$1      
-    apt-get update -q
-    apt-get upgrade -yq
+    sudo apt-get update -q
+    sudo apt-get upgrade -yq
     # Install required packages
-    apt-get install -yq sudo virtualbox vagrant virtualbox-guest-dkms net-tools sshpass
+    sudo apt-get install -yq virtualbox net-tools sshpass
+    wget https://releases.hashicorp.com/vagrant/2.2.10/vagrant_2.2.10_x86_64.deb
+    sudo dpkg -i vagrant_2.2.10_x86_64.deb
     # Add user
     useradd -m -s /bin/bash $username
     # Set password and give sudo access
@@ -94,27 +96,32 @@ Vagrant.configure("2") do |config|
   SHELL
 
   # Script d'installation de ZSH
-  config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
-    echo "========================================================"
+  # config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
+  #   echo "========================================================"
+  #   echo "================= Installation de ZSH =================="
+  #   echo "========================================================"
+  #   username=$1
+  #   # Installez zsh
+  #   sudo apt-get install -y zsh
+  #   # Téléchargez l'installateur de Oh My Zsh dans le répertoire de l'utilisateur
+  #   sudo -u $username wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O /home/$username/ohmyzsh-install.sh
+  #   # Changer le propriétaire du fichier
+  #   sudo chown $username:$username /home/$username/ohmyzsh-install.sh
+  #   # Rendre le script exécutable
+  #   sudo chmod 777 /home/$username/ohmyzsh-install.sh
+  #   # Exécute le script en tant qu'utilisateur non privilégié
+  #   sudo -u $username sh -c "$(cat /home/$username/ohmyzsh-install.sh)" "" --unattended
+  #   # Définit Zsh comme shell par défaut pour l'utilisateur
+  #   sudo chsh -s $(which zsh) $username
+  #   sudo chmod 777 /home/bhamdi/.zshrc
+  #   echo "ZSH_THEME='robbyrussell'" >> /home/$username/.zshrc
+  # SHELL
+  config.vm.provision "shell", privileged: false, args: username, inline: <<-SHELL
     echo "================= Installation de ZSH =================="
-    echo "========================================================"
-    username=$1
-    # Installez zsh
     sudo apt-get install -y zsh
-    # Téléchargez l'installateur de Oh My Zsh dans le répertoire de l'utilisateur
-    sudo -u $username wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O /home/$username/ohmyzsh-install.sh
-    # Changer le propriétaire du fichier
-    sudo chown $username:$username /home/$username/ohmyzsh-install.sh
-    # Rendre le script exécutable
-    sudo chmod +rwd /home/$username/ohmyzsh-install.sh
-    # Exécute le script en tant qu'utilisateur non privilégié
-    sudo -u $username sh -c "$(cat /home/$username/ohmyzsh-install.sh)" "" --unattended
-    # Définit Zsh comme shell par défaut pour l'utilisateur
-    sudo chsh -s $(which zsh) $username
-    sudo chmod +rwd /home/bhamdi/.zshrc
-    echo "ZSH_THEME='robbyrussell'" >> /home/$username/.zshrc
+    sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    echo "ZSH_THEME='robbyrussell'" >> ~/.zshrc
   SHELL
-
   # Script d'exécution d'Oh My Zsh
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
