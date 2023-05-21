@@ -58,7 +58,7 @@ source ~/.zshrc
 
 # en cas de probleme dans la machine vagrant@Inseption-Of-Things pour eviter de retapper les commandes une par une
 
-# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant VirtualBoxVMs .vagrant.d ~/VirtualBox\ VMs 
+# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant VirtualBoxVMs ~/VirtualBox\ VMs 
 
 
 ###################################################################
@@ -90,7 +90,7 @@ k describe node bhamdiSW
 
 ifconfig eth1
 
-vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ../.vagrant.d ~/VirtualBox\ VMs ./scripts/
+vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ~/VirtualBox\ VMs ./scripts/
 
 
 
@@ -137,7 +137,7 @@ http://app2.com
 http://app3.com
 
 
-vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ../.vagrant.d ~/VirtualBox\ VMs
+vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ~/VirtualBox\ VMs
 
 
 #####################
@@ -187,7 +187,7 @@ https://localhost:8080
 
 # k logs -n kube-system $(kubectl get pods -n kube-system -l k8s-app=metrics-server -o jsonpath='{.items[0].metadata.name}')
 
-vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ../.vagrant.d ~/VirtualBox\ VMs
+vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ~/VirtualBox\ VMs
 
 
 

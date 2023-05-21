@@ -113,15 +113,10 @@ Vagrant.configure("2") do |config|
     # Téléchargez l'installateur de Oh My Zsh dans le répertoire de l'utilisateur
     sudo -u $username wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O /home/$username/ohmyzsh-install.sh
     sh -c "$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-    # Changer le propriétaire du fichier
-    sudo chown $username:$username /home/$username/ohmyzsh-install.sh
     # Rendre le script exécutable
     sudo chmod 777 /home/$username/ohmyzsh-install.sh
     # Exécute le script en tant qu'utilisateur non privilégié
     sudo -u $username sh -c "$(cat /home/$username/ohmyzsh-install.sh)" "" --unattended
-    # # Définit Zsh comme shell par défaut pour l'utilisateur
-    # sudo chsh -s $(which zsh) $username
-    # sudo chmod 777 /home/bhamdi/.zshrc
     echo "ZSH_THEME='robbyrussell'" >> /home/$username/.zshrc
   SHELL
 
@@ -147,8 +142,7 @@ Vagrant.configure("2") do |config|
     echo "=============== Création du dossier IOT ================"
     echo "========================================================"
     username=$1
-    # Copier les dossiers IOT et .ssh
-    rsync -a /ssh/* /home/$username/.ssh/
+    # Copier le dossier IOT
     rsync -a /hote/p1 /home/$username/Desktop/IOT/
     rsync -a /hote/p2 /home/$username/Desktop/IOT/
     rsync -a /hote/p3 /home/$username/Desktop/IOT/
@@ -156,8 +150,31 @@ Vagrant.configure("2") do |config|
     rsync -a /hote/cmdVagrant /home/$username/Desktop/IOT/
     # Donner tous les droits
     chmod -R 777 /home/$username/Desktop/IOT
-    # Assurez-vous que l'utilisateur est le propriétaire du dossier
-    chown -R $username:$username /home/$username/Desktop/IOT
+  SHELL
+
+  # Script de configuration Git
+  config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
+    echo "========================================================"
+    echo "=============== Configuration de Git ==================="
+    echo "========================================================"
+    username=$1
+    # Copier le dossier .ssh
+    rsync -a /ssh/* /home/$username/.ssh/
+    # Donner tous les droits
+    chmod -R 777 /home/$username/.ssh/
+    # Configurations d'utilisateur Git globales
+    su - $username -c 'git config --global user.email "42bhamdi@gmail.com"'
+    su - $username -c 'git config --global user.name "bhamdi"'
+  SHELL
+
+  # Script de configuration des droits d'utilisateur
+    config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
+    echo "========================================================"
+    echo "=========== Configuration des droits d'utilisateur =========="
+    echo "========================================================"
+    username=$1
+    # Changer la propriété de tout le répertoire personnel de l'utilisateur
+    chown -Rf $username:$username /home/$username/*
   SHELL
 
   # Script de redémarrage
