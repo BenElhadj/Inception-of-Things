@@ -179,8 +179,6 @@ sudo docker volume ls
 sudo docker volume rm $(docker volume ls -q)
 
 
-
-
 # sudo docker build -t $(whoami)/myproject .
 sudo docker build -t my-k3d-argocd-app .
 sudo docker run -d -p 8888:8888 -p 8080:8080 --name=my-running-app my-k3d-argocd-app
