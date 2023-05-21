@@ -170,7 +170,7 @@ Vagrant.configure("2") do |config|
   # Script de configuration des droits d'utilisateur
     config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
-    echo "=========== Configuration des droits d'utilisateur =========="
+    echo "======== Configuration des droits d'utilisateur ========"
     echo "========================================================"
     username=$1
     # Changer la propriété de tout le répertoire personnel de l'utilisateur

@@ -9,7 +9,7 @@ spec:
     namespace: dev
     server: https://kubernetes.default.svc
   source:
-    repoURL: https://github.com/BenElhadj/Inception-of-Things/tree/main/p3/app
+    repoURL: https://github.com/BenElhadj/Inception-of-Things-p3
     path: .
     targetRevision: main
   syncPolicy:

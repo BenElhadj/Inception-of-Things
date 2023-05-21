@@ -1,109 +1,122 @@
 #!/bin/bash
 
-# Default values
-CLUSTER_NAME=$(whoami)
-WAIT_TIMEOUT=600s
-idx=0
+# Variables
+utilisateur="$USER"
 
-# Function to increment and print a message with the index number
-print_msg() {
-    idx=$((idx+1))
-    echo -e "\033[32m[$idx] $1\033[0m"
-}
+# Mettre à jour le système
+sudo apt -y update
 
-# Function to check if a command exists and install it if necessary
-check_command() {
-  for command in "$@"; do
-    if ! command -v "$command" &> /dev/null; then
-      print_msg "Installing $command"
-      case $command in
-        docker) install_docker;;
-        k3d) install_k3d;;
-        kubectl) install_kubectl;;
-      esac
+# Installer les dépendances
+sudo apt -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common xclip
+
+# Installation de Docker
+function installer_docker {
+    echo "========================================================"
+    echo "================ Installation de Docker ================"
+    echo "========================================================"
+
+    # Importer la clé GPG de Docker
+    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --yes --dearmor -o /etc/apt/trusted.gpg.d/docker-archive-keyring.gpg
+
+    # Ajouter le dépôt Docker à Debian
+    echo "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+    # Installer Docker
+    sudo apt -y update
+    sudo apt -y install docker-ce docker-ce-cli containerd.io
+
+    # Démarrer le service
+    sudo systemctl enable --now docker
+
+    # Ajouter l'utilisateur au groupe Docker s'il n'en fait pas déjà partie
+    if ! id -nG "$utilisateur" | grep -qw docker; then
+        sudo usermod -aG docker $utilisateur
     fi
-  done
 }
 
-install_docker() {
-  sudo apt-get remove docker docker-engine docker.io containerd runc
-  sudo apt-get -y update
-  sudo apt-get -y install ca-certificates curl gnupg
-  sudo install -m 0755 -d /etc/apt/keyrings
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-  sudo chmod a+r /etc/apt/keyrings/docker.gpg
-  echo \
-      "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-      $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  sudo apt-get -y update
-  sudo apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+# Installation de kubectl
+function installer_kubectl {
+    echo "========================================================"
+    echo "================ Installation de kubectl ==============="
+    echo "========================================================"
+
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+    curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+    echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+    sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+    rm -f kubectl
 }
 
-install_k3d() {
-  wget -q -O - https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+# Installation de k3d
+function installer_k3d {
+    echo "========================================================"
+    echo "================== Installation de k3d ================="
+    echo "========================================================"
+
+    curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+    echo "source <(k3d completion bash)" >> ~/.bashrc
+    sudo k3d cluster create mycluster
+    sudo kubectl create namespace dev
+    sudo kubectl create namespace argocd
+    sudo kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+    curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+    chmod +x argocd
 }
 
-install_kubectl() {
-  curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-  echo "$(curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256")  kubectl" | sha256sum --check
-  sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-  rm -f kubectl kubectl.sha256
+# Installation d'Argocd
+function installer_argocd {
+    echo "========================================================"
+    echo "================= Installation d'Argocd ================"
+    echo "========================================================"
+
+    sudo kubectl apply -f ./deployment.yml
+
+    echo -n "Initialisation du cluster"
+    local counter=0
+    while [ "$(sudo kubectl get pod -n argocd | grep "1/1" | wc -l)" != 7 ]
+    do
+        sleep 1
+        counter=$((counter+1))
+        local hours=$((counter / 3600))
+        local minutes=$(((counter / 60) % 60))
+        local seconds=$((counter % 60))
+        echo -ne " $(printf "%02d:%02d:%02d" $hours $minutes $seconds)...\r"
+    done
+    echo -e "\nLe cluster est prêt après $(printf "%02d:%02d:%02d" $hours $minutes $seconds) !"
 }
 
-# Function to delete the cluster and namespaces
-delete_cluster() {
-  print_msg "Deleting namespaces"
-  sudo kubectl delete namespace argocd dev --ignore-not-found=true
-  print_msg "Deleting cluster"
-  sudo k3d cluster delete $CLUSTER_NAME
+# Interface utilisateur d'ArgoCD
+function interface_utilisateur_argocd {
+    echo "========================================================"
+    echo "===== Démarrage de l'interface utilisateur d'ArgoCD ===="
+    echo "========================================================"
+
+    while true
+    do sudo kubectl port-forward -n argocd svc/argocd-server 8080:443 1>/dev/null 2>/dev/null
+    done &
+    while true
+    do sudo kubectl port-forward -n dev svc/wil-playground 8888:8888 1>/dev/null 2>/dev/null
+    done &
 }
 
-# Function to create the cluster and deploy ArgoCD and the app
-install_argo() {
-  print_msg "Creating cluster"
-  sudo k3d cluster create $CLUSTER_NAME --wait --timeout 120s
-  print_msg "Creating namespaces"
-  sudo kubectl create namespace argocd
-  sudo kubectl create namespace dev
-  print_msg "Deploying ArgoCD"
-  sudo kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-  print_msg "Waiting ArgoCD"
-  sudo kubectl wait --timeout $WAIT_TIMEOUT --for=condition=Ready pods --all -n argocd
-  print_msg "Deploying app"
-  sudo kubectl apply -f ./configs.yml
-  print_msg "Waiting app"
-  sudo kubectl wait --timeout $WAIT_TIMEOUT --for=condition=Ready pods --all -n argocd
-  print_msg "Getting admin password"
-  PASS=$(sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d)
-  printf "\n\n\tadmin\n\t%s\n" "$PASS"
+# Récupération des informations d'identification ArgoCD
+function recuperer_identifiants {
+    echo "========================================================"
+    echo "========= Récupération d'identification ArgoCD ========="
+    echo "========================================================"
+
+    echo "======Informations d'identification======"
+    echo "Nom d'utilisateur : admin"
+    echo -n "Mot de passe : "
+    sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+	echo ""
 }
 
-case "$1" in
-    "start")
-        # Launching the command and storing the process ID in a file
-        if [[ $(kubectl get namespace argocd --no-headers --output=custom-columns=NAME:.metadata.name 2>/dev/null) != "argocd" ]]; then
-            echo "The 'argocd' namespace does not exist."
-            exit 1
-        fi
-        sudo kubectl port-forward -n argocd svc/argocd-server 8080:443 >/dev/null & echo $! > process_id.txt
-        echo "Process launched successfully! ID: $(cat process_id.txt)";;
-    "deploy")
-        check_command docker kubectl k3d
-        delete_cluster
-        install_argo
-        echo "Deploy done!!\nFor start ArgoCD: install start";;
-    "stop")
-        # Stopping the process from the ID stored in the file
-        if [ -f "process_id.txt" ]; then
-            PID=$(cat process_id.txt)
-            kill "$PID"
-            rm process_id.txt
-            echo "Process stopped successfully!"
-        else
-            echo "No process is currently running."
-        fi;;
-    *)
-        echo "Usage: $0 [deploy|start|stop]"
-        exit 1
-        ;;
-esac
+installer_docker
+installer_kubectl
+installer_k3d
+installer_argocd
+interface_utilisateur_argocd
+recuperer_identifiants
+
+echo "Toutes les installations sont terminées avec succès!"

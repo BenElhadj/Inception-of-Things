@@ -156,34 +156,39 @@ K3d est un outil qui permet de créer des clusters K3s dans Docker. En d'autres 
 En résumé, K3s est une distribution légère de Kubernetes, tandis que K3d est un outil pour exécuter cette distribution légère dans Docker.
 
 cd p3
-# chmod +x ./scripts/*
-# vagrant up
 
-# vagrant ssh
+chmod +x *
 
-# kubectl get namespaces
+./install.sh
 
-# k get pods -n argocd
-# k get pods -n dev
+sudo kubectl get ns
+sudo kubectl get pods -n dev
+sudo kubectl get pods -n argocd
+sudo kubectl get nodes
 
-# kubectl port-forward svc/argocd-server -n argocd 8080:443
+sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=”{.data.password}” | sed 's/^.//;s/.$//' | base64 -d | xclip -sel clip
 
-sudo docker ps -a
-sudo docker stop $(docker ps -a -q)
-sudo docker rm $(docker ps -a -q)
-
-sudo docker images -a
-sudo docker rmi $(docker images -q)
-
-sudo docker volume ls
-sudo docker volume rm $(docker volume ls -q)
-
-
-# sudo docker build -t $(whoami)/myproject .
-sudo docker build -t my-k3d-argocd-app .
-sudo docker run -d -p 8888:8888 -p 8080:8080 --name=my-running-app my-k3d-argocd-app
 http://localhost:8888
 https://localhost:8080
+
+
+sudo docker ps -a
+sudo docker stop $(sudo docker ps -a -q)
+sudo docker rm $(sudo docker ps -a -q)
+
+sudo docker images -a
+sudo docker rmi $(sudo docker images -q)
+
+sudo docker volume ls
+sudo docker volume rm $(sudo docker volume ls -q)
+
+sudo docker stop $(sudo docker ps -a -q) && sudo docker rm $(sudo docker ps -a -q) && sudo docker rmi $(sudo docker images -q) && sudo docker volume rm $(sudo docker volume ls -q)
+
+
+
+
+
 
 # k logs -n kube-system $(kubectl get pods -n kube-system -l k8s-app=metrics-server -o jsonpath='{.items[0].metadata.name}')
 
