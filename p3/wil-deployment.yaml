@@ -4,33 +4,33 @@ metadata:
   name: wil-playground
   namespace: dev
   labels:
-    app: wil-app
+    app: wil-playground
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: wil-app
+      app: wil-playground
   template:
     metadata:
       labels:
-        app: wil-app
+        app: wil-playground
     spec:
       containers:
-        - name: app
-          image: "wil42/playground:v1"
-          ports:
-            - containerPort: 8888
+      - name: wil-playground
+        image: "wil42/playground:v1"
+        ports:
+          - containerPort: 8888
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: wil-app
+  name: wil-playground
   namespace: dev
 spec:
   selector:
-    app: wil-app
+    app: wil-playground
+  type: NodePort
   ports:
-    - protocol: TCP
-      port: 8888
-      targetPort: 8888
-  type: LoadBalancer
+  - port: 8888
+    targetPort: 8888
+    nodePort: 30080

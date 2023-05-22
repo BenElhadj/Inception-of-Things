@@ -60,7 +60,31 @@ function installer_k3d {
     sudo kubectl create namespace argocd
     sudo kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
     curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+    
+    sudo chown $USER:$USER ~/.kube/config
     chmod +x argocd
+}
+
+# Configuration du contrôleur d'Ingress Traefik
+function configurer_Ingress_Traefik {
+    echo "========================================================"
+    echo "===== Configuration du contrôleur d'Ingress Traefik ===="
+    echo "========================================================"
+
+    # Installation de Helm
+    curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3
+    chmod 700 get_helm.sh
+    ./get_helm.sh
+    rm get_helm.sh
+
+    # Ajouter le repo de Traefik Helm
+    helm repo add traefik https://helm.traefik.io/traefik
+
+    # Créer une namespace pour Traefik
+    sudo kubectl create namespace traefik
+
+    # Installer Traefik avec Helm
+    helm install traefik traefik/traefik --namespace traefik
 }
 
 # Installation d'Argocd
@@ -71,16 +95,15 @@ function installer_argocd {
 
     sudo kubectl apply -f ./deployment.yml
 
-    echo -n "Initialisation du cluster"
     local counter=0
-    while [ "$(sudo kubectl get pod -n argocd | grep "1/1" | wc -l)" != 7 ]
+    while [ "$(sudo kubectl get pod -n argocd 2>/dev/null | grep "1/1" | wc -l)" != 7 ]
     do
         sleep 1
         counter=$((counter+1))
         local hours=$((counter / 3600))
         local minutes=$(((counter / 60) % 60))
         local seconds=$((counter % 60))
-        echo -ne " $(printf "%02d:%02d:%02d" $hours $minutes $seconds)...\r"
+        echo -ne "\rVeuillez patienter, l'installation d'Argocd est en cours $(printf "%02d:%02d:%02d" $hours $minutes $seconds) ..."
     done
     echo -e "\nLe cluster est prêt après $(printf "%02d:%02d:%02d" $hours $minutes $seconds) !"
 }
@@ -104,8 +127,9 @@ function recuperer_identifiants {
     echo "========================================================"
     echo "========= Récupération d'identification ArgoCD ========="
     echo "========================================================"
+    echo "============= Informations d'identification ============"
+    echo "========================================================"
 
-    echo "======Informations d'identification======"
     echo "Nom d'utilisateur : admin"
     echo -n "Mot de passe : "
     sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
@@ -115,6 +139,7 @@ function recuperer_identifiants {
 installer_docker
 installer_kubectl
 installer_k3d
+configurer_Ingress_Traefik
 installer_argocd
 interface_utilisateur_argocd
 recuperer_identifiants
