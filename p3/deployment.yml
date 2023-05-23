@@ -9,7 +9,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    repoURL: https://github.com/BenElhadj/Inception-of-Things-p3.0.git
+    repoURL: https://github.com/BenElhadj/Inception-of-Things-p3.git
     targetRevision: master
     path: kubernetes
     directory:
