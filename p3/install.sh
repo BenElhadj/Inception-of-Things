@@ -11,58 +11,67 @@ sudo apt -y install apt-transport-https ca-certificates curl gnupg2 software-pro
 
 # Installation de Docker
 function installer_docker {
-    echo "========================================================"
-    echo "================ Installation de Docker ================"
-    echo "========================================================"
+    if ! command -v docker &> /dev/null
+    then
+        echo "========================================================"
+        echo "================ Installation de Docker ================"
+        echo "========================================================"
 
-    # Importer la clé GPG de Docker
-    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --yes --dearmor -o /etc/apt/trusted.gpg.d/docker-archive-keyring.gpg
+        # Importer la clé GPG de Docker
+        curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --yes --dearmor -o /etc/apt/trusted.gpg.d/docker-archive-keyring.gpg
 
-    # Ajouter le dépôt Docker à Debian
-    echo "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+        # Ajouter le dépôt Docker à Debian
+        echo "deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-    # Installer Docker
-    sudo apt -y update
-    sudo apt -y install docker-ce docker-ce-cli containerd.io
+        # Installer Docker
+        sudo apt -y update
+        sudo apt -y install docker-ce docker-ce-cli containerd.io
 
-    # Démarrer le service
-    sudo systemctl enable --now docker
+        # Démarrer le service
+        sudo systemctl enable --now docker
 
-    # Ajouter l'utilisateur au groupe Docker s'il n'en fait pas déjà partie
-    if ! id -nG "$utilisateur" | grep -qw docker; then
-        sudo usermod -aG docker $utilisateur
+        # Ajouter l'utilisateur au groupe Docker s'il n'en fait pas déjà partie
+        if ! id -nG "$utilisateur" | grep -qw docker; then
+            sudo usermod -aG docker $utilisateur
+        fi
     fi
 }
 
 # Installation de kubectl
 function installer_kubectl {
-    echo "========================================================"
-    echo "================ Installation de kubectl ==============="
-    echo "========================================================"
+    if ! command -v kubectl &> /dev/null
+    then
+        echo "========================================================"
+        echo "================ Installation de kubectl ==============="
+        echo "========================================================"
 
-    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
-    curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
-    echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
-    sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-    rm -f kubectl
+        curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+        curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+        echo "$(cat kubectl.sha256)  kubectl" | sha256sum --check
+        sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+        rm -f kubectl
+    fi
 }
 
 # Installation de k3d
 function installer_k3d {
-    echo "========================================================"
-    echo "================== Installation de k3d ================="
-    echo "========================================================"
+    if ! command -v k3d &> /dev/null
+    then
+        echo "========================================================"
+        echo "================== Installation de k3d ================="
+        echo "========================================================"
 
-    curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
-    echo "source <(k3d completion bash)" >> ~/.bashrc
-    sudo k3d cluster create mycluster
-    sudo kubectl create namespace dev
-    sudo kubectl create namespace argocd
-    sudo kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
-    
-    sudo chown $USER:$USER ~/.kube/config
-    chmod +x argocd
+        curl -s https://raw.githubusercontent.com/rancher/k3d/main/install.sh | bash
+        echo "source <(k3d completion bash)" >> ~/.bashrc
+        sudo k3d cluster create mycluster
+        sudo kubectl create namespace dev
+        sudo kubectl create namespace argocd
+        sudo kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+        curl -sSL -o argocd https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+        
+        sudo chown $USER:$USER ~/.kube/config
+        chmod +x argocd
+    fi
 }
 
 # Configuration du contrôleur d'Ingress Traefik
@@ -130,6 +139,7 @@ function recuperer_identifiants {
     echo "============= Informations d'identification ============"
     echo "========================================================"
 
+    echo "Lien vers ArgoCD : https://localhost:8080"
     echo "Nom d'utilisateur : admin"
     echo -n "Mot de passe : "
     sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d

@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: wil-playground-app
+  name: iot-bhamdi
   namespace: argocd
 spec:
   destination:
@@ -10,8 +10,8 @@ spec:
   project: default
   source:
     repoURL: https://github.com/BenElhadj/Inception-of-Things-p3
-    targetRevision: master
-    path: kubernetes
+    targetRevision: main
+    path: .
     directory:
       recurse: true
   syncPolicy:
