@@ -149,6 +149,7 @@ echo "[user]
 	email = 42bhamdi@gmail.com
 [alias]
     up = !sh -c 'git add -A && git commit -m "$1" && git push' -" >> ~/.gitconfig
+    
 #######################################################################
 # vous devez remplacer votre adresse email de git et votre nom de git #
 #######################################################################
