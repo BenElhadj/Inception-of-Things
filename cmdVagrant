@@ -148,8 +148,6 @@ vagrant halt -f && vagrant destroy -echo f && rm -rf ../.configVB .vagrant ../Vi
 echo "[user]
 	email = 42bhamdi@gmail.com
 	name = bhamdi
-[alias]
-    up = !sh -c 'git add -A && git commit -m "$1" && git push' -" >> ~/.gitconfig
 #######################################################################
 # vous devez remplacer votre adresse email de git et votre nom de git #
 #######################################################################
@@ -183,6 +181,8 @@ curl http://localhost:8888/
 
 sed -i 's/wil42\/playground\:v1/wil42\/playground\:v2/g' ../manifests/wil-deployment.yaml
 sed -i 's/wil42\/playground\:v2/wil42\/playground\:v1/g' ../manifests/wil-deployment.yaml
+
+git up "v1" / git up "v2"
 
 cat ../manifests/wil-deployment.yaml | grep v1
 cat ../manifests/wil-deployment.yaml | grep v2
