@@ -144,6 +144,18 @@ vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../Virtual
 # pour tester le p3 #
 #####################
 
+######################################################################
+#######      ajouter a la fichier ~/.gitconfig ces lignes      #######
+######################################################################
+[user]
+	email = 42bhamdi@gmail.com
+	name = bhamdi
+[alias]
+    up = !sh -c 'git add -A && git commit -m "$1" && git push' -
+######################################################################
+bien sur vous remplacer votre adresse email de git et votre nom de git 
+######################################################################
+
 La différence majeure entre K3S et K3D
 est que K3S déploie un cluster Kubernetes basé sur une machine virtuelle,
 tandis que K3D déploie des clusters Kubernetes K3S basés sur Docker,
@@ -166,8 +178,17 @@ sudo kubectl get pods -n dev
 sudo kubectl get pods -n argocd
 sudo kubectl get nodes
 
+cat wil-deployment/wil-deployment.yaml | grep v2
+cat wil-deployment/wil-deployment.yaml | grep v1
 curl http://localhost:8888/
-curl http://172.18.0.2:8888
+
+sed -i 's/wil42\/playground\:v1/wil42\/playground\:v2/g'  wil-deployment/wil-deployment.yaml 
+
+cat wil-deployment/wil-deployment.yaml | grep v1
+cat wil-deployment/wil-deployment.yaml | grep v2
+
+
+
 https://localhost:8080
 
 sudo docker ps -a
