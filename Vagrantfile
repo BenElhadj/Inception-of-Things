@@ -170,7 +170,8 @@ Vagrant.configure("2") do |config|
     su - $username -c 'git config --global user.email "42bhamdi@gmail.com"'
     su - $username -c 'git config --global user.name "bhamdi"'
     echo '[alias]' >> /home/$username/.gitconfig
-    echo -e "\\tup = !sh -c 'git add -A && git commit -m \"\$1\" && git push' -" >> /home/$username/.gitconfig
+    echo -e "\\tup = \"!f() { git add -A && git commit -m \\\"$@\\\" && git push; }; f\"" >> /home/$username/.gitconfig
+    
   SHELL
 
   # Script de configuration des droits d'utilisateur
