@@ -147,7 +147,11 @@ Vagrant.configure("2") do |config|
     rsync -a /hote/p2 /home/$username/Desktop/IOT/
     rsync -a /hote/p3 /home/$username/Desktop/IOT/
     rsync -a /hote/bonus /home/$username/Desktop/IOT/
+    rsync -a /hote/manifests /home/$username/Desktop/IOT/
     rsync -a /hote/cmdVagrant /home/$username/Desktop/IOT/
+    rsync -a /hote/Vagrantfile /home/$username/Desktop/IOT/
+    rsync -a /hote/.gitignore /home/$username/Desktop/IOT/
+    rsync -a /hote/.git /home/$username/Desktop/IOT/
     # Donner tous les droits
     chmod -R 777 /home/$username/Desktop/IOT
   SHELL
@@ -165,6 +169,8 @@ Vagrant.configure("2") do |config|
     # Configurations d'utilisateur Git globales
     su - $username -c 'git config --global user.email "42bhamdi@gmail.com"'
     su - $username -c 'git config --global user.name "bhamdi"'
+    echo '[alias]' >> /home/$username/.gitconfig
+    echo -e "\\tup = !sh -c 'git add -A && git commit -m \"\$1\" && git push' -" >> /home/$username/.gitconfig
   SHELL
 
   # Script de configuration des droits d'utilisateur
