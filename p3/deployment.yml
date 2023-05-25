@@ -9,9 +9,9 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    repoURL: https://github.com/BenElhadj/Inception-of-Things-p3
+    repoURL: https://github.com/BenElhadj/Inception-of-Things
     targetRevision: main
-    path: .
+    path: p3/wil-deployment/
     directory:
       recurse: true
   syncPolicy:

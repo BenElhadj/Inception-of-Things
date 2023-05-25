@@ -96,7 +96,6 @@ function configurer_Ingress_Traefik {
     helm install traefik traefik/traefik --namespace traefik
 }
 
-# Installation d'Argocd
 function installer_argocd {
     echo "========================================================"
     echo "================= Installation d'Argocd ================"
@@ -105,14 +104,20 @@ function installer_argocd {
     sudo kubectl apply -f ./deployment.yml
 
     local counter=0
-    while [ "$(sudo kubectl get pod -n argocd 2>/dev/null | grep "1/1" | wc -l)" != 7 ]
+    local prev_ready_pods=0
+    local ready_pods
+    while [ "$prev_ready_pods" -lt 7 ]
     do
         sleep 1
         counter=$((counter+1))
         local hours=$((counter / 3600))
         local minutes=$(((counter / 60) % 60))
         local seconds=$((counter % 60))
-        echo -ne "\rVeuillez patienter, l'installation d'Argocd est en cours $(printf "%02d:%02d:%02d" $hours $minutes $seconds) ..."
+        ready_pods="$(sudo kubectl get pod -n argocd 2>/dev/null | grep "1/1" | wc -l)"
+        if [ "$ready_pods" -gt "$prev_ready_pods" ]; then
+            echo -e "\rVeuillez patienter, l'installation d'Argocd est en cours. Pod(s) prêt(s) : $ready_pods/7 après $(printf "%02d:%02d:%02d" $hours $minutes $seconds) ..."
+            prev_ready_pods=$ready_pods
+        fi
     done
     echo -e "\nLe cluster est prêt après $(printf "%02d:%02d:%02d" $hours $minutes $seconds) !"
 }
