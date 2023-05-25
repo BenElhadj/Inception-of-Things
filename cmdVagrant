@@ -166,9 +166,7 @@ K3d est un outil qui permet de créer des clusters K3s dans Docker. En d'autres 
 En résumé, K3s est une distribution légère de Kubernetes, tandis que K3d est un outil pour exécuter cette distribution légère dans Docker.
 
 dans le dossier IOT
-git stash
-git fetch
-git pull
+git stash && git fetch && git pull
 
 cd p3
 
