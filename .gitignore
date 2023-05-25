@@ -6,10 +6,5 @@ p1/scripts/
 p2/test/
 p3/test/
 bonus/test/
-
-# p1
-# p2
-# p3
-# bonus
-# Correction
-# OmegaOptions
+argocd
+kubectl.sha256
