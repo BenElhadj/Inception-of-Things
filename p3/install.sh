@@ -115,8 +115,10 @@ function installer_argocd {
         local seconds=$((counter % 60))
         ready_pods="$(sudo kubectl get pod -n argocd 2>/dev/null | grep "1/1" | wc -l)"
         if [ "$ready_pods" -gt "$prev_ready_pods" ]; then
-            echo -e "\rVeuillez patienter, l'installation d'Argocd est en cours. Pod(s) prêt(s) : $ready_pods/7 après $(printf "%02d:%02d:%02d" $hours $minutes $seconds) ..."
+            echo -e "\rPod(s) prêt(s) : $ready_pods/7 après $(printf "%02d:%02d:%02d" $hours $minutes $seconds) ..."
             prev_ready_pods=$ready_pods
+        else
+            echo -ne "\rVeuillez patienter, l'installation d'Argocd est en cours... $(printf "%02d:%02d:%02d" $hours $minutes $seconds) ..."
         fi
     done
     echo -e "\nLe cluster est prêt après $(printf "%02d:%02d:%02d" $hours $minutes $seconds) !"

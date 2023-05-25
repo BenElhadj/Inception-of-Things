@@ -38,9 +38,7 @@ VBoxManage setproperty machinefolder /mnt/nfs/homes/$(whoami)/sgoinfre/Inception
 ###########################################
 
 source ~/.zshrc
-
-##############################
-# les  principales commandes #
+echo 
 ##############################
 
 # vagrant up
@@ -79,7 +77,7 @@ vagrant up
 vagrant global-status
 
 vagrant ssh bhamdiS
-
+echo 
 k get nodes -o wide
 
 dans un autre terminale et au memme dossier
@@ -98,7 +96,7 @@ vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../Virtual
 # pour tester le p2 #
 #####################
 
-cd p2
+cd p2echo 
 chmod +x ./scripts/*
 vagrant up
 
@@ -137,24 +135,24 @@ http://app2.com
 http://app3.com
 
 
-vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ~/VirtualBox\ VMs
+vagrant halt -f && vagrant destroy -echo f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ~/VirtualBox\ VMs
 
 
 #####################
 # pour tester le p3 #
 #####################
 
-######################################################################
-#######      ajouter a la fichier ~/.gitconfig ces lignes      #######
-######################################################################
-[user]
+#######################################################################
+#######      ajouter a la fichier ~/.gitconfig ces lignes       #######
+#######################################################################
+echo "[user]
 	email = 42bhamdi@gmail.com
 	name = bhamdi
 [alias]
-    up = !sh -c 'git add -A && git commit -m "$1" && git push' -
-######################################################################
-bien sur vous remplacer votre adresse email de git et votre nom de git 
-######################################################################
+    up = !sh -c 'git add -A && git commit -m "$1" && git push' -" >> ~/.gitconfig
+#######################################################################
+# vous devez remplacer votre adresse email de git et votre nom de git #
+#######################################################################
 
 La différence majeure entre K3S et K3D
 est que K3S déploie un cluster Kubernetes basé sur une machine virtuelle,
@@ -180,7 +178,16 @@ sudo kubectl get nodes
 
 cat wil-deployment/wil-deployment.yaml | grep v2
 cat wil-deployment/wil-deployment.yaml | grep v1
+
 curl http://localhost:8888/
+
+sed -i 's/wil42\/playground\:v1/wil42\/playground\:v2/g'  wil-deployment/wil-deployment.yaml 
+
+cat wil-deployment/wil-deployment.yaml | grep v1
+cat wil-deployment/wil-deployment.yaml | grep v2
+
+
+
 
 sed -i 's/wil42\/playground\:v1/wil42\/playground\:v2/g'  wil-deployment/wil-deployment.yaml 
 
@@ -195,7 +202,7 @@ sudo docker ps -a
 sudo docker stop $(sudo docker ps -a -q)
 sudo docker rm $(sudo docker ps -a -q)
 
-sudo docker images -a
+sudo docker images -aecho 
 sudo docker rmi $(sudo docker images -q)
 
 sudo docker volume ls

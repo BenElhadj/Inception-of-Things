@@ -10,8 +10,8 @@ spec:
   project: default
   source:
     repoURL: https://github.com/BenElhadj/Inception-of-Things
-    targetRevision: main
-    path: p3/wil-deployment/
+    targetRevision: HEAD
+    path: manifests
     directory:
       recurse: true
   syncPolicy:
