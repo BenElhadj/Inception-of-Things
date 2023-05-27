@@ -38,26 +38,20 @@ VBoxManage setproperty machinefolder /mnt/nfs/homes/$(whoami)/sgoinfre/Inception
 ###########################################
 
 source ~/.zshrc
-echo 
+
 ##############################
 
 # vagrant up
 # vagrant reload 
 # vagrant ssh 
 
-# scp -r ../../vagrant/bonus ../../vagrant/p* . && cd p1 && vagrant up
-
 # vagrant halt
 # vagrant up
 # vagrant provision
 
-# vagrant ssh bhamdiS
-# vagrant ssh bhamdiSW
-
 # en cas de probleme dans la machine vagrant@Inseption-Of-Things pour eviter de retapper les commandes une par une
 
-# vagrant halt -f && vagrant destroy -f && rm -rf .configVB .vagrant VirtualBoxVMs ~/VirtualBox\ VMs 
-
+# vagrant halt -f && vagrant destroy -f && rm -rf /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/.configVB /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/.vagrant /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/VirtualBoxVMs ~/VirtualBox\ VMs 
 
 ###################################################################
 # avant de commencer assurer vous d'avoir votre VirtualBox ouvert #
@@ -77,7 +71,7 @@ vagrant up
 vagrant global-status
 
 vagrant ssh bhamdiS
-echo 
+ 
 k get nodes -o wide
 
 dans un autre terminale et au memme dossier
@@ -88,19 +82,17 @@ k describe node bhamdiSW
 
 ifconfig eth1
 
-vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ~/VirtualBox\ VMs ./scripts/
-
-
+vagrant halt -f && vagrant destroy -f && rm -rf /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/.configVB /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/VirtualBoxVMs ~/VirtualBox\ VMs .vagrant 
 
 #####################
 # pour tester le p2 #
 #####################
 
-cd p2echo 
+cd p2
 chmod +x ./scripts/*
 vagrant up
 
-vagrant global-status
+vagrant global-status --prune
 
 vagrant ssh bhamdiS
 
@@ -134,9 +126,7 @@ http://app1.com
 http://app2.com
 http://app3.com
 
-
-vagrant halt -f && vagrant destroy -echo f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ~/VirtualBox\ VMs
-
+vagrant halt -f && vagrant destroy -f && rm -rf /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/.configVB /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/VirtualBoxVMs ~/VirtualBox\ VMs .vagrant 
 
 #####################
 # pour tester le p3 #
@@ -147,9 +137,9 @@ vagrant halt -f && vagrant destroy -echo f && rm -rf ../.configVB .vagrant ../Vi
 #######################################################################
 echo "[user]
 	email = 42bhamdi@gmail.com
+    name = bhamdi
 [alias]
     up = !sh -c 'git add -A && git commit -m "$1" && git push' -" >> ~/.gitconfig
-    
 #######################################################################
 # vous devez remplacer votre adresse email de git et votre nom de git #
 #######################################################################
@@ -181,27 +171,61 @@ sudo kubectl get pods -n dev
 sudo kubectl get pods -n argocd
 sudo kubectl get nodes
 
-cat ../manifests/wil-deployment.yaml | grep v2
-cat ../manifests/wil-deployment.yaml | grep v1
+dans le dossier de IOT-wil-deployment
+cat manifests/wil-deployment.yaml | grep image
+curl -s https://raw.githubusercontent.com/BenElhadj/Inception-of-Things-bhamdi/main/manifests/wil-deployment.yaml | grep image
+cat manifests/wil-deployment.yaml | grep v1
+curl http://localhost:8888/
+
+sed -i 's/wil42\/playground\:v1/wil42\/playground\:v2/g' manifests/wil-deployment.yaml
+
+git up "v2"
 
 curl http://localhost:8888/
 
-sed -i 's/wil42\/playground\:v1/wil42\/playground\:v2/g' ../manifests/wil-deployment.yaml
-sed -i 's/wil42\/playground\:v2/wil42\/playground\:v1/g' ../manifests/wil-deployment.yaml
-
-git up "v1" / git up "v2"
-
-cat ../manifests/wil-deployment.yaml | grep v1
-cat ../manifests/wil-deployment.yaml | grep v2
+sed -i 's/wil42\/playground\:v2/wil42\/playground\:v1/g' manifests/wil-deployment.yaml
+git up "v1"
 
 curl http://localhost:8888/
+
+########################
+# pour tester le Bonus #
+########################
+
+cd bonus
+
+./install-gitlab-bonus.sh
+
+sudo kubectl get ns
+sudo kubectl get pods -n dev
+sudo kubectl get pods -n argocd
+sudo kubectl get nodes
+
+dans le dossier de IOT-wil-deployment
+cat manifests/wil-deployment.yaml | grep image
+curl -s https://raw.githubusercontent.com/BenElhadj/Inception-of-Things-bhamdi/main/manifests/wil-deployment.yaml | grep image
+cat manifests/wil-deployment.yaml | grep v1
+curl http://localhost:8888/
+
+sed -i 's/wil42\/playground\:v1/wil42\/playground\:v2/g' manifests/wil-deployment.yaml
+
+git up "v2"
+
+curl http://localhost:8888/
+
+sed -i 's/wil42\/playground\:v2/wil42\/playground\:v1/g' manifests/wil-deployment.yaml
+git up "v1"
+
+curl http://localhost:8888/
+
+
 
 
 sudo docker ps -a
 sudo docker stop $(sudo docker ps -a -q)
 sudo docker rm $(sudo docker ps -a -q)
 
-sudo docker images -aecho 
+sudo docker images -a
 sudo docker rmi $(sudo docker images -q)
 
 sudo docker volume ls
@@ -209,23 +233,10 @@ sudo docker volume rm $(sudo docker volume ls -q)
 
 sudo docker stop $(sudo docker ps -a -q) && sudo docker rm $(sudo docker ps -a -q) && sudo docker rmi $(sudo docker images -q) && sudo docker volume rm $(sudo docker volume ls -q)
 
-sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-sudo kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=”{.data.password}” | sed 's/^.//;s/.$//' | base64 -d | xclip -sel clip
-
-
-
-
-
 
 
 
 # k logs -n kube-system $(kubectl get pods -n kube-system -l k8s-app=metrics-server -o jsonpath='{.items[0].metadata.name}')
 
-vagrant halt -f && vagrant destroy -f && rm -rf ../.configVB .vagrant ../VirtualBoxVMs ~/VirtualBox\ VMs
-
-
-
-########################
-# pour tester le Bonus #
-########################
+vagrant halt -f && vagrant destroy -f && rm -rf /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/.configVB /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/VirtualBoxVMs ~/VirtualBox\ VMs .vagrant
 
