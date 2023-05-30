@@ -49,7 +49,7 @@ Vagrant.configure("2") do |config|
     sudo apt-get update -q
     sudo apt-get upgrade -yq
     # Install required packages
-    sudo apt-get install -yq virtualbox net-tools sshpass
+    sudo apt-get install -yq virtualbox net-tools sshpass jq
     wget https://releases.hashicorp.com/vagrant/2.2.10/vagrant_2.2.10_x86_64.deb
     sudo dpkg -i vagrant_2.2.10_x86_64.deb
     # Add user
@@ -136,26 +136,6 @@ Vagrant.configure("2") do |config|
     newgrp docker 
   SHELL
 
-  # Script de création du dossier IOT
-  config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
-    echo "========================================================"
-    echo "=============== Création du dossier IOT ================"
-    echo "========================================================"
-    username=$1
-    # Copier le dossier IOT
-    rsync -a /hote/p1 /home/$username/Desktop/IOT/
-    rsync -a /hote/p2 /home/$username/Desktop/IOT/
-    rsync -a /hote/p3 /home/$username/Desktop/IOT/
-    rsync -a /hote/bonus /home/$username/Desktop/IOT/
-    rsync -a /hote/manifests /home/$username/Desktop/IOT/
-    rsync -a /hote/cmdVagrant /home/$username/Desktop/IOT/
-    rsync -a /hote/Vagrantfile /home/$username/Desktop/IOT/
-    rsync -a /hote/.gitignore /home/$username/Desktop/IOT/
-    rsync -a /hote/.git /home/$username/Desktop/IOT/
-    # Donner tous les droits
-    chmod -R 777 /home/$username/Desktop/IOT
-  SHELL
-
   # Script de configuration Git
   config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
@@ -167,15 +147,45 @@ Vagrant.configure("2") do |config|
     # Donner tous les droits
     chmod -R 777 /home/$username/.ssh/
     # Configurations d'utilisateur Git globales
-    su - $username -c 'git config --global user.email "42bhamdi@gmail.com"'
-    su - $username -c 'git config --global user.name "bhamdi"'
+    su - $username -c 'git config --global user.email "votre_email@email.com"'
+    su - $username -c 'git config --global user.name "votre_login"'
     echo '[alias]' >> /home/$username/.gitconfig
     echo -e "\\tup = \\\"!f() { git add -A && git commit -m \\\\\\"\\\$@\\\\\\" && git push; }; f\\\"" >> /home/$username/.gitconfig
     
   SHELL
 
+  # Script de création du dossier IOT
+  config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
+    echo "========================================================"
+    echo "=============== Création du dossier IOT ================"
+    echo "========================================================"
+    username=$1
+    # Créer les dossiers sur le bureau en tant qu'utilisateur
+    mkdir -p /home/$username/Desktop/IOT-wil-deployment
+    mkdir -p /home/$username/Desktop/IOT-bonus-gitlab
+    # Changer la propriété des dossiers pour l'utilisateur
+    chown -R $username:$username /home/$username/Desktop/IOT-wil-deployment
+    chown -R $username:$username /home/$username/Desktop/IOT-bonus-gitlab
+    # Copier le dossier IOT
+    rsync -a /hote/p1 /home/$username/Desktop/IOT/
+    rsync -a /hote/p2 /home/$username/Desktop/IOT/
+    rsync -a /hote/p3 /home/$username/Desktop/IOT/
+    rsync -a /hote/bonus /home/$username/Desktop/IOT/
+    rsync -a /hote/cmdVagrant /home/$username/Desktop/IOT/
+    rsync -a /hote/en.subject.pdf /home/$username/Desktop/IOT/
+    rsync -a /hote/.git* /home/$username/Desktop/IOT/
+    # Ajouter les clés de l'hôte à known_hosts
+    sudo -u $username ssh-keyscan -H github.com >> /home/$username/.ssh/known_hosts
+    sudo -u $username ssh-keyscan -H gitlab.com >> /home/$username/.ssh/known_hosts
+    # Cloner les dépôts Git dans les dossiers correspondants
+    sudo -u $username git clone git@github.com:mettez-le-lien-vers-votre-repo-github /home/$username/Desktop/IOT-wil-deployment
+    sudo -u $username git clone git@gitlab.com:mettez-le-lien-vers-votre-repo-gitlab /home/$username/Desktop/IOT-bonus-gitlab
+    # Donner tous les droits
+    chmod -R 777 /home/$username/Desktop/IOT*
+  SHELL
+
   # Script de configuration des droits d'utilisateur
-    config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
+  config.vm.provision "shell", privileged: true, args: username, inline: <<-SHELL
     echo "========================================================"
     echo "======== Configuration des droits d'utilisateur ========"
     echo "========================================================"

@@ -9,7 +9,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    repoURL: https://github.com/BenElhadj/Inception-of-Things
+    repoURL: https://github.com/mettez-le-lien-vers-votre-repo-github
     targetRevision: HEAD
     path: manifests
     directory:

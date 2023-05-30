@@ -51,7 +51,7 @@ source ~/.zshrc
 
 # en cas de probleme dans la machine vagrant@Inseption-Of-Things pour eviter de retapper les commandes une par une
 
-# vagrant halt -f && vagrant destroy -f && rm -rf /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/.configVB /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/.vagrant /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/VirtualBoxVMs ~/VirtualBox\ VMs 
+# vagrant halt -f && vagrant destroy -f && rm -rf /sgoinfre/goinfre/Perso/$(whoami)/Inception-of-Things/.configVB /sgoinfre/goinfre/Perso/$(whoami)/Inception-of-Things/.vagrant /sgoinfre/goinfre/Perso/$(whoami)/Inception-of-Things/VirtualBoxVMs ~/VirtualBox\ VMs 
 
 ###################################################################
 # avant de commencer assurer vous d'avoir votre VirtualBox ouvert #
@@ -70,19 +70,19 @@ vagrant up
  
 vagrant global-status
 
-vagrant ssh bhamdiS
+vagrant ssh $(whoami)S
  
 k get nodes -o wide
 
 dans un autre terminale et au memme dossier
-vagrant ssh bhamdiSW
+vagrant ssh $(whoami)SW
 
-k describe node bhamdiS
-k describe node bhamdiSW
+k describe node $(whoami)S
+k describe node $(whoami)SW
 
 ifconfig eth1
 
-vagrant halt -f && vagrant destroy -f && rm -rf /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/.configVB /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/VirtualBoxVMs ~/VirtualBox\ VMs .vagrant 
+vagrant halt -f && vagrant destroy -f && rm -rf /sgoinfre/goinfre/Perso/$(whoami)/Inception-of-Things/.configVB /sgoinfre/goinfre/Perso/$(whoami)/Inception-of-Things/VirtualBoxVMs ~/VirtualBox\ VMs .vagrant 
 
 #####################
 # pour tester le p2 #
@@ -94,7 +94,7 @@ vagrant up
 
 vagrant global-status --prune
 
-vagrant ssh bhamdiS
+vagrant ssh $(whoami)S
 
 ifconfig eth1
 
@@ -126,7 +126,7 @@ http://app1.com
 http://app2.com
 http://app3.com
 
-vagrant halt -f && vagrant destroy -f && rm -rf /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/.configVB /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/VirtualBoxVMs ~/VirtualBox\ VMs .vagrant 
+vagrant halt -f && vagrant destroy -f && rm -rf /sgoinfre/goinfre/Perso/$(whoami)/Inception-of-Things/.configVB /sgoinfre/goinfre/Perso/$(whoami)/Inception-of-Things/VirtualBoxVMs ~/VirtualBox\ VMs .vagrant 
 
 #####################
 # pour tester le p3 #
@@ -136,8 +136,8 @@ vagrant halt -f && vagrant destroy -f && rm -rf /sgoinfre/goinfre/Perso/bhamdi/I
 #######      ajouter a la fichier ~/.gitconfig ces lignes       #######
 #######################################################################
 echo "[user]
-	email = 42bhamdi@gmail.com
-    name = bhamdi
+	email = votre_email@email.com
+    name = votre_login
 [alias]
     up = !sh -c 'git add -A && git commit -m "$1" && git push' -" >> ~/.gitconfig
 #######################################################################
@@ -171,7 +171,6 @@ sudo kubectl get nodes
 
 dans le dossier de IOT-wil-deployment
 cat manifests/wil-deployment.yaml | grep image
-curl -s https://raw.githubusercontent.com/BenElhadj/Inception-of-Things-bhamdi/main/manifests/wil-deployment.yaml | grep image
 cat manifests/wil-deployment.yaml | grep v1
 curl http://localhost:8888/
 
@@ -201,7 +200,6 @@ sudo kubectl get nodes
 
 dans le dossier de IOT-wil-deployment
 cat manifests/wil-deployment.yaml | grep image
-curl -s https://raw.githubusercontent.com/BenElhadj/Inception-of-Things-bhamdi/main/manifests/wil-deployment.yaml | grep image
 cat manifests/wil-deployment.yaml | grep v1
 curl http://localhost:8888/
 
@@ -217,8 +215,6 @@ git up "v1"
 curl http://localhost:8888/
 
 
-
-
 sudo docker ps -a
 sudo docker stop $(sudo docker ps -a -q)
 sudo docker rm $(sudo docker ps -a -q)
@@ -232,9 +228,7 @@ sudo docker volume rm $(sudo docker volume ls -q)
 sudo docker stop $(sudo docker ps -a -q) && sudo docker rm $(sudo docker ps -a -q) && sudo docker rmi $(sudo docker images -q) && sudo docker volume rm $(sudo docker volume ls -q)
 
 
-
-
 # k logs -n kube-system $(kubectl get pods -n kube-system -l k8s-app=metrics-server -o jsonpath='{.items[0].metadata.name}')
 
-vagrant halt -f && vagrant destroy -f && rm -rf /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/.configVB /sgoinfre/goinfre/Perso/bhamdi/Inception-of-Things/VirtualBoxVMs ~/VirtualBox\ VMs .vagrant
+vagrant halt -f && vagrant destroy -f && rm -rf /sgoinfre/goinfre/Perso/$(whoami)/Inception-of-Things/.configVB /sgoinfre/goinfre/Perso/$(whoami)/Inception-of-Things/VirtualBoxVMs ~/VirtualBox\ VMs .vagrant
 
