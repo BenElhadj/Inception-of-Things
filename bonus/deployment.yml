@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: iot-bhamdi-gitlab
+  name: iot-votrlogin-gitlab
   namespace: argocd
 spec:
   destination:
@@ -9,7 +9,7 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    repoURL: https://gitlab.com/bhamdi/IOT-42
+    repoURL: https://gitlab.com//mettez-le-lien-vers-votre-repo-gitlab
     targetRevision: HEAD
     path: manifests
     directory:

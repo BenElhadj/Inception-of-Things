@@ -4,7 +4,7 @@
 GITLAB_PRIVATE_TOKEN="glpat-bLMzJ7s84jhj2uFccxts"
 USERNAME=$(whoami)
 EXTERNAL_IP=$(curl -s ifconfig.me)
-EMAIL="42bhamdi@gmail.com"
+EMAIL="votre_email@email.com"
 DOCKER_REGISTRY="https://registry.${USERNAME}-bonus.xip.io/"
 
 # Installer Helm (si ce n'est pas déjà fait)
